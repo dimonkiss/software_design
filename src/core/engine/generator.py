@@ -93,10 +93,14 @@ class PythonGenerator:
                 lines.append("            current_block_id = None")
 
             elif block.type == 'ASSIGN':
-                rhs = str(block.value)
-                lines.append(f"            # ASSIGN {block.target_var} = {rhs}")
-                if block.target_var:
-                    lines.append(f"            shared.{block.target_var} = to_u32({rhs})")
+                if block.src_var:
+                    lines.append(f"            # ASSIGN {block.target_var} = {block.src_var}")
+                    lines.append(f"            shared.{block.target_var} = shared.{block.src_var}")
+                else:
+                    val = block.value if block.value is not None else 0
+                    lines.append(f"            # ASSIGN {block.target_var} = {val}")
+                    lines.append(f"            shared.{block.target_var} = to_u32({val})")
+
                 lines.append(f"            current_block_id = {block.next_id}")
 
             elif block.type == 'PRINT':
