@@ -1,6 +1,6 @@
 # MultiThread Flow Translator
 
-![Build Status](https://img.shields.io/github/actions/workflow/status/username/repo/tests.yml?branch=main)
+![Build Status](https://img.shields.io/github/actions/workflow/status/dimonkiss/software_design/tests.yml?branch=master)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
