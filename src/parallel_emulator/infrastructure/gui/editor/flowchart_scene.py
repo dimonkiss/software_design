@@ -39,8 +39,6 @@ class FlowchartScene(QGraphicsScene):
             self.addItem(item)
             self.block_items[block.id] = item
 
-        # TODO: завантаження зв’язків (можна додати пізніше, якщо зберігати connections окремо)
-
     def start_connection(self, from_item: BlockItem, is_true: bool = False):
         self._connection_start = from_item
         self._is_true_branch = is_true

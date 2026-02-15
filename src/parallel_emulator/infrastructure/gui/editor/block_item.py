@@ -1,5 +1,6 @@
 from dataclasses import replace
-from PyQt6.QtCore import Qt, QPointF
+
+from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QBrush, QPen, QColor, QFont
 from PyQt6.QtWidgets import QGraphicsRectItem, QGraphicsTextItem, QGraphicsEllipseItem, QGraphicsItem, QMenu
 
@@ -99,3 +100,21 @@ class BlockItem(QGraphicsRectItem):
             self.scene().edit_block(self)
         elif chosen == delete_action and hasattr(self.scene(), "remove_block"):
             self.scene().remove_block(self)
+
+    def contextMenuEvent(self, event):
+        menu = QMenu()
+
+        edit_action = menu.addAction("Редагувати блок")
+        delete_action = menu.addAction("Видалити блок")
+
+        # Забороняємо редагування START і END
+        edit_action.setEnabled(self.block.type not in (BlockType.START, BlockType.END))
+
+        chosen = menu.exec(event.screenPos())
+
+        if chosen == edit_action:
+            if hasattr(self.scene(), "edit_block"):
+                self.scene().edit_block(self)
+        elif chosen == delete_action:
+            if hasattr(self.scene(), "remove_block"):
+                self.scene().remove_block(self)
