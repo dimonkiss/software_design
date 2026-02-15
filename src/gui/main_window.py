@@ -93,10 +93,12 @@ class MainWindow(QMainWindow):
 
     def close_thread_tab(self, index):
         if self.tab_widget.count() <= 1:
+            QMessageBox.warning(self, "Увага", "Проект повинен мати мінімум 1 потік!")
             return
+
         self.tab_widget.removeTab(index)
-        # Примітка: видалення з self.project.threads потребує обережності з ID,
-        # тут спрощено.
+        if index < len(self.project.threads):
+            self.project.threads.pop(index)
 
     def add_block_to_current(self, block_type):
         """Додає блок у поточну активну вкладку."""
