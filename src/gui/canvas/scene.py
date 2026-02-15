@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QGraphicsScene, QGraphicsLineItem, QGraphicsItem
+from PySide6.QtWidgets import QGraphicsScene, QGraphicsLineItem, QGraphicsItem, QMessageBox
 from PySide6.QtCore import Qt, QPointF, QLineF
 from PySide6.QtGui import QPen
 
@@ -21,7 +21,11 @@ class CanvasScene(QGraphicsScene):
     def add_block(self, block_type: str, pos: QPointF):
         if not self.thread_model: return
 
-        # Генеруємо унікальний ID (максимальний існуючий + 1)
+        if len(self.thread_model.blocks) >= 100:
+            parent_view = self.views()[0] if self.views() else None
+            QMessageBox.warning(parent_view, "Ліміт блоків", "В одному потоці може бути максимум 100 блоків!")
+            return None
+
         if not self.thread_model.blocks:
             new_id = 1
         else:
