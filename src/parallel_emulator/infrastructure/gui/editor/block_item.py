@@ -99,7 +99,10 @@ class BlockItem(QGraphicsRectItem):
         delete_action = menu.addAction("Видалити блок")
         edit_action.setEnabled(self.block.type not in (BlockType.START, BlockType.END))
 
-        chosen = menu.exec(event.screenPos())
+        view = self.scene().views()[0]
+        global_pos = view.mapToGlobal(view.mapFromScene(event.scenePos()))
+        chosen = menu.exec(global_pos)
+
         if chosen == edit_action and hasattr(self.scene(), "edit_block"):
             self.scene().edit_block(self)
         elif chosen == delete_action and hasattr(self.scene(), "remove_block"):

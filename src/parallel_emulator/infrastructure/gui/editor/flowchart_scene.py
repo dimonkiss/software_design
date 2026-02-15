@@ -1,6 +1,6 @@
 from dataclasses import replace
 from typing import Dict
-from PyQt6.QtCore import Qt, pyqtSignal, QPointF
+from PyQt6.QtCore import Qt, pyqtSignal, QPointF, QTimer
 from PyQt6.QtGui import QPen, QColor
 from PyQt6.QtWidgets import QGraphicsScene, QGraphicsSceneMouseEvent
 
@@ -25,6 +25,7 @@ class FlowchartScene(QGraphicsScene):
         self._rubber_line = None
         self._connection_start = None
         self._is_true_branch = False
+        self._pending_delete_conns: list[ConnectionItem] = []
 
         self.setSceneRect(0, 0, 2000, 2000)
         self.load_from_thread()
@@ -193,25 +194,38 @@ class FlowchartScene(QGraphicsScene):
             self.block_changed.emit()
 
     def remove_block(self, item: BlockItem):
-        """Видаляє блок + всі зв’язки до/від нього"""
+        print("ВИДАЛЕННЯ БЛОКУ", item.block.id)
         block_id = item.block.id
 
-        if block_id in self.thread.blocks:
-            del self.thread.blocks[block_id]
+        for b in list(self.thread.blocks.values()):
+            updated = False
+            if b.next == block_id:
+                b = replace(b, next=None)
+                updated = True
+            if b.type == BlockType.DECISION:
+                if b.true_next == block_id:
+                    b = replace(b, true_next=None)
+                    updated = True
+                if b.false_next == block_id:
+                    b = replace(b, false_next=None)
+                    updated = True
+            if updated:
+                self.thread.blocks[b.id] = b
+                if b.id in self.block_items:
+                    self.block_items[b.id].block = b
+                    # Оновлюємо стрілки
+                    for conn in self.connections:
+                        if conn.from_item.block.id == b.id:
+                            conn.update_position()
 
-        self.removeItem(item)
-        if block_id in self.block_items:
-            del self.block_items[block_id]
-
-        to_remove = []
-        for conn in self.connections[:]:
-            if (conn.start_item.block.id == block_id or
-                conn.end_item.block.id == block_id):
-                to_remove.append(conn)
-
+        to_remove = [conn for conn in self.connections if conn.from_item == item or conn.to_item == item]
         for conn in to_remove:
             self.removeItem(conn)
             self.connections.remove(conn)
+
+        del self.thread.blocks[block_id]
+        self.removeItem(item)
+        del self.block_items[block_id]
 
         self.block_changed.emit()
 
