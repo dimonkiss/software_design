@@ -1,6 +1,7 @@
 from dataclasses import replace
-from typing import Dict, Optional
+from typing import Dict
 from PyQt6.QtCore import Qt, pyqtSignal, QPointF
+from PyQt6.QtGui import QPen, QColor
 from PyQt6.QtWidgets import QGraphicsScene, QGraphicsSceneMouseEvent
 
 from src.parallel_emulator.domain.entities.block import Block
@@ -21,8 +22,8 @@ class FlowchartScene(QGraphicsScene):
         self.thread = thread
         self.block_items: Dict[int, BlockItem] = {}
         self.connections: list[ConnectionItem] = []
-        self._connection_start: Optional[BlockItem] = None
         self._rubber_line = None
+        self._connection_start = None
         self._is_true_branch = False
 
         self.setSceneRect(0, 0, 2000, 2000)
@@ -40,28 +41,69 @@ class FlowchartScene(QGraphicsScene):
             self.block_items[block.id] = item
 
     def start_connection(self, from_item: BlockItem, is_true: bool = False):
+        print("СТАРТ ЗВ'ЯЗКУ від блоку", from_item.block.id)  # DEBUG
         self._connection_start = from_item
         self._is_true_branch = is_true
-        self._rubber_line = self.addLine(0, 0, 0, 0, Qt.PenStyle.DashLine)
+
+        start_pos = self._get_port_position(from_item, is_true)
+        self._rubber_line = self.addLine(
+            start_pos.x(), start_pos.y(),
+            start_pos.x(), start_pos.y(),
+            QPen(QColor(100, 180, 255), 4, Qt.PenStyle.DashLine)
+        )
+        self.update()
+
+    def _get_port_position(self, item: BlockItem, is_true: bool) -> QPointF:
+        if item.block.type == BlockType.DECISION:
+            if is_true and item.true_port:
+                return item.pos() + item.true_port.pos() + item.true_port.rect().center()
+            if item.false_port:
+                return item.pos() + item.false_port.pos() + item.false_port.rect().center()
+        if item.out_port:
+            return item.pos() + item.out_port.pos() + item.out_port.rect().center()
+        return item.pos() + QPointF(70, 60)
 
     def mouseMoveEvent(self, event: QGraphicsSceneMouseEvent):
-        if self._rubber_line and self._connection_start:
-            start_pos = self._connection_start.pos() + QPointF(70, 60)
-            self._rubber_line.setLine(start_pos.x(), start_pos.y(), event.scenePos().x(), event.scenePos().y())
+        if self._rubber_line is not None:
+            print("Оновлюю стрілку")  # DEBUG
+            start_pos = self._get_port_position(self._connection_start, self._is_true_branch)
+            self._rubber_line.setLine(
+                start_pos.x(), start_pos.y(),
+                event.scenePos().x(), event.scenePos().y()
+            )
         super().mouseMoveEvent(event)
 
-    def mouseReleaseEvent(self, event: QGraphicsSceneMouseEvent):
-        if self._connection_start and self._rubber_line:
-            end_item = self.itemAt(event.scenePos(), self.views()[0].transform())
-            if isinstance(end_item, BlockItem) and end_item != self._connection_start:
-                self._create_connection(self._connection_start, end_item, self._is_true_branch)
+    def finish_connection(self, to_item: BlockItem):
+        print("ФІНІШ ЗВ'ЯЗКУ на блоку", to_item.block.id)  # DEBUG
+        if self._connection_start is None:
+            return
+
+        if to_item == self._connection_start:
+            self._cancel_connection()
+            return
+
+        self._create_connection(self._connection_start, to_item, self._is_true_branch)
+        self._cancel_connection()
+
+    def _cancel_connection(self):
+        print("СКАСУВАННЯ")  # DEBUG
+        if self._rubber_line is not None:
             self.removeItem(self._rubber_line)
             self._rubber_line = None
-            self._connection_start = None
-        super().mouseReleaseEvent(event)
+        self._connection_start = None
+
+    def mousePressEvent(self, event: QGraphicsSceneMouseEvent):
+        item = self.itemAt(event.scenePos(), self.views()[0].transform())
+
+        if self._connection_start is not None and item is None:
+            print("Клік на порожнє місце — скасування")
+            self._cancel_connection()
+
+        super().mousePressEvent(event)
 
     def _create_connection(self, from_item: BlockItem, to_item: BlockItem, is_true: bool):
-        # оновлюємо модель
+        print("ФІКСАЦІЯ ПОСТІЙНОЇ СТРІЛКИ від", from_item.block.id, "до", to_item.block.id)
+
         from_block = from_item.block
         to_id = to_item.block.id
 
@@ -73,11 +115,12 @@ class FlowchartScene(QGraphicsScene):
             new_block = replace(from_block, next=to_id)
 
         self.thread.blocks[from_block.id] = new_block
-        from_item.block = new_block   # оновлюємо item
+        from_item.block = new_block
 
         conn = ConnectionItem(from_item, to_item, is_true)
         self.addItem(conn)
         self.connections.append(conn)
+        print("Стрілка додана, всього:", len(self.connections))
         self.block_changed.emit()
 
     def add_block(self, block_type: BlockType, pos: QPointF):
@@ -171,3 +214,8 @@ class FlowchartScene(QGraphicsScene):
             self.connections.remove(conn)
 
         self.block_changed.emit()
+
+    def on_block_moved(self, item: BlockItem):
+        for conn in self.connections:
+            if conn.from_item == item or conn.to_item == item:
+                conn.update_position()

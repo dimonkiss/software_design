@@ -57,6 +57,10 @@ class BlockItem(QGraphicsRectItem):
             self.false_port = QGraphicsEllipseItem(4, 25, 16, 16, self)  # зліва
             self.false_port.setBrush(QBrush(QColor(220, 0, 0)))  # червоний = False
 
+        for port in (self.in_port, self.out_port, self.true_port, self.false_port):
+            if port is not None:
+                port.setAcceptedMouseButtons(Qt.MouseButton.NoButton)
+
     def _get_brush(self) -> QBrush:
         colors = {
             BlockType.START:    QColor(100, 200, 100),
@@ -101,20 +105,33 @@ class BlockItem(QGraphicsRectItem):
         elif chosen == delete_action and hasattr(self.scene(), "remove_block"):
             self.scene().remove_block(self)
 
-    def contextMenuEvent(self, event):
-        menu = QMenu()
+    def mousePressEvent(self, event):
+        if event.button() == Qt.MouseButton.LeftButton:
+            scene = self.scene()
 
-        edit_action = menu.addAction("Редагувати блок")
-        delete_action = menu.addAction("Видалити блок")
+            # Якщо стрілка вже малюється — клік на будь-якому блоці фіксує її до IN-порту
+            if hasattr(scene, '_connection_start') and scene._connection_start is not None:
+                if self != scene._connection_start and self.in_port is not None:  # має бути вхідний порт
+                    print("ФІКСАЦІЯ СТРІЛКИ на блоці", self.block.id)
+                    scene.finish_connection(self)
+                    return
+                else:
+                    # Якщо клік на той самий блок — скасування
+                    print("Клік на той самий блок — скасування")
+                    scene._cancel_connection()
+                    return
 
-        # Забороняємо редагування START і END
-        edit_action.setEnabled(self.block.type not in (BlockType.START, BlockType.END))
+            pos = event.pos()
 
-        chosen = menu.exec(event.screenPos())
+            # Звичайний старт з вихідного порту
+            if self.out_port and self.out_port.contains(pos):
+                scene.start_connection(self, is_true=False)
+                return
+            if self.true_port and self.true_port.contains(pos):
+                scene.start_connection(self, is_true=True)
+                return
+            if self.false_port and self.false_port.contains(pos):
+                scene.start_connection(self, is_true=False)
+                return
 
-        if chosen == edit_action:
-            if hasattr(self.scene(), "edit_block"):
-                self.scene().edit_block(self)
-        elif chosen == delete_action:
-            if hasattr(self.scene(), "remove_block"):
-                self.scene().remove_block(self)
+        super().mousePressEvent(event)

@@ -1,31 +1,45 @@
-from PyQt6.QtCore import Qt, QPointF
-from PyQt6.QtGui import QPen, QColor, QPainterPath
-from PyQt6.QtWidgets import QGraphicsPathItem
+from PyQt6.QtCore import QPointF
+from PyQt6.QtGui import QPen, QColor
+from PyQt6.QtWidgets import QGraphicsLineItem, QGraphicsItem
 
 from src.parallel_emulator.domain.enums.block_type import BlockType
-from src.parallel_emulator.infrastructure.gui.editor.block_item import BlockItem
 
 
-class ConnectionItem(QGraphicsPathItem):
-    def __init__(self, start_item: "BlockItem", end_item: "BlockItem", is_true: bool = False, parent=None):
-        super().__init__(parent)
-        self.start_item = start_item
-        self.end_item = end_item
+class ConnectionItem(QGraphicsLineItem):
+    def __init__(self, from_item, to_item, is_true=False):
+        super().__init__()
+        self.from_item = from_item
+        self.to_item = to_item
         self.is_true = is_true
-        self.setPen(QPen(QColor(50, 50, 50), 3, Qt.PenStyle.SolidLine))
-        self.setZValue(-1)
-        self.update_path()
 
-    def update_path(self):
-        start_pos = self.start_item.pos() + self.start_item.out_port.pos() + self.start_item.out_port.rect().center()
-        if self.start_item.block.type == BlockType.DECISION and self.is_true and self.start_item.true_port:
-            start_pos = self.start_item.pos() + self.start_item.true_port.pos() + self.start_item.true_port.rect().center()
-        elif self.start_item.block.type == BlockType.DECISION and not self.is_true and self.start_item.false_port:
-            start_pos = self.start_item.pos() + self.start_item.false_port.pos() + self.start_item.false_port.rect().center()
+        color = QColor(100, 180, 255)
+        if from_item.block.type == BlockType.DECISION:
+            color = QColor(0, 200, 0) if is_true else QColor(220, 0, 0)
 
-        end_pos = self.end_item.pos() + QPointF(70, 0)  # top center of target
+        self.setPen(QPen(color, 3))
+        self.setZValue(-1)  # під блоками
 
-        path = QPainterPath()
-        path.moveTo(start_pos)
-        path.lineTo(end_pos)
-        self.setPath(path)
+        self.update_position()
+
+    def update_position(self):
+        start = self._get_start_pos()
+        end = self._get_end_pos()
+        self.setLine(start.x(), start.y(), end.x(), end.y())
+
+    def _get_start_pos(self):
+        if self.from_item.block.type == BlockType.DECISION:
+            port = self.from_item.true_port if self.is_true else self.from_item.false_port
+        else:
+            port = self.from_item.out_port
+        return self.from_item.mapToScene(port.rect().center())
+
+    def _get_end_pos(self):
+        if self.to_item.in_port:
+            return self.to_item.mapToScene(self.to_item.in_port.rect().center())
+        return self.to_item.scenePos() + QPointF(70, 0)
+
+    # Оновлення при русі блоків
+    def itemChange(self, change, value):
+        if change == QGraphicsItem.GraphicsItemChange.ItemPositionHasChanged:
+            self.update_position()
+        return super().itemChange(change, value)
