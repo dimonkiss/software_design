@@ -1,3 +1,5 @@
+from pathlib import Path
+import subprocess
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QColor, QAction
 from PyQt6.QtWidgets import (
@@ -6,6 +8,7 @@ from PyQt6.QtWidgets import (
 )
 
 from src.parallel_emulator.application.services.project_service import ProjectService
+from src.parallel_emulator.core.code_generator import CodeGenerator
 from src.parallel_emulator.domain.entities.project import Project
 from src.parallel_emulator.domain.entities.thread import Thread
 from src.parallel_emulator.infrastructure.gui.dialogs.test_dialog import TestDialog
@@ -48,14 +51,9 @@ class MainWindow(QMainWindow):
         toolbar.addAction("Додати потік", self.add_thread)
         toolbar.addSeparator()
 
-        self.run_action = QAction("▶ Запустити тест", self)
-        self.run_action.triggered.connect(self.run_test)
-        toolbar.addAction(self.run_action)
-
-        self.stop_action = QAction("⏹ Стоп", self)
-        self.stop_action.setEnabled(False)
-        self.stop_action.triggered.connect(self.stop_test)
-        toolbar.addAction(self.stop_action)
+        self.generate_run_action = QAction("Генерувати та запустити код", self)
+        self.generate_run_action.triggered.connect(self.generate_and_run_code)
+        toolbar.addAction(self.generate_run_action)
 
     # ==================== ПАЛІТРА (з drag & drop) ====================
     def _create_palette_dock(self):
@@ -184,3 +182,11 @@ class MainWindow(QMainWindow):
             total = self.sim_thread.search.calculate_total_paths_up_to_k(k)
             msg = f"Перевірено {checked}/{total} шляхів\nВідсоток: {percent:.2f}%"
             QMessageBox.information(self, f"K = {k}", msg)
+
+    def generate_and_run_code(self):
+        output_dir = Path("data/generated_code")
+        generator = CodeGenerator(self.project)
+        launcher_path = generator.generate_code(output_dir)
+
+        # Запускаємо лаунчер
+        subprocess.Popen(['python', str(launcher_path)])
