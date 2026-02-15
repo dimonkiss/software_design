@@ -1,6 +1,5 @@
 from typing import List, Tuple
-
-from models import Project, ThreadModel, MAX_VAL, MIN_VAL
+from .models import Project, ThreadModel, MAX_VAL, MIN_VAL
 
 
 class ValidationError:
@@ -44,7 +43,7 @@ class ProjectValidator:
 
         # Обмеження кількості блоків
         if len(thread.blocks) > 100:
-            thread_errors.append(ValidationError("Thread exceeds 100 blocks limit", thread.id))
+            thread_errors.append(ValidationError(f"Thread exceeds 100 blocks limit", thread.id))
 
         if not thread.blocks:
             thread_errors.append(ValidationError("Thread is empty", thread.id))
@@ -72,23 +71,15 @@ class ProjectValidator:
                         f"Value {block.value} is out of 32-bit unsigned range", thread.id, block.id
                     ))
 
-            # Перевірка використання змінних
-            for var_name in [block.target_var, block.src_var]:
-                if var_name and var_name not in shared_vars:
-                    thread_errors.append(ValidationError(
-                        f"Variable '{var_name}' is not registered in shared memory", thread.id, block.id
-                    ))
-
-            # Перевірка цілісності зв'язків (чи існують блоки, на які ми посилаємось)
             if block.type == 'DECISION':
-                if block.true_next_id not in block_ids:
+                if block.true_next_id and block.true_next_id not in block_ids:
                     thread_errors.append(
                         ValidationError("Branch 'True' points to non-existent block", thread.id, block.id))
-                if block.false_next_id not in block_ids:
+                if block.false_next_id and block.false_next_id not in block_ids:
                     thread_errors.append(
                         ValidationError("Branch 'False' points to non-existent block", thread.id, block.id))
             elif block.type != 'END':
-                if block.next_id not in block_ids:
+                if block.next_id and block.next_id not in block_ids:
                     thread_errors.append(
                         ValidationError(f"Block points to non-existent next block (ID: {block.next_id})", thread.id,
                                         block.id))

@@ -1,22 +1,29 @@
 import json
 import dataclasses
-from models import Project, ThreadModel, Block
+from src.core.models import Project, ThreadModel, Block
 
 
 class ProjectSerializer:
     @staticmethod
     def serialize(project: Project) -> str:
-        """Перетворює об'єкт проекту в JSON рядок."""
-        return json.dumps(dataclasses.asdict(project), indent=4)
+        """Перетворює об'єкт Project у форматований JSON-рядок."""
+        data = dataclasses.asdict(project)
+        return json.dumps(data, indent=4, ensure_ascii=False)
 
     @staticmethod
-    def deserialize(data_str: str) -> Project:
-        """Відновлює об'єкт проекту з JSON рядка."""
-        data = json.loads(data_str)
+    def deserialize(json_str: str) -> Project:
+        """Відновлює об'єкт Project із JSON-рядка."""
+        try:
+            data = json.loads(json_str)
+        except json.JSONDecodeError as e:
+            raise ValueError(f"Некоректний JSON файл: {e}")
 
         threads = []
         for t_data in data.get('threads', []):
-            blocks = [Block(**b_data) for b_data in t_data.get('blocks', [])]
+            blocks = []
+            for b_data in t_data.get('blocks', []):
+                blocks.append(Block(**b_data))
+
             threads.append(ThreadModel(
                 id=t_data['id'],
                 name=t_data['name'],

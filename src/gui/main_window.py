@@ -1,14 +1,18 @@
-from PySide6.QtWidgets import (QMainWindow, QTabWidget, QDockWidget,
-                               QMessageBox, QToolBar, QStyle)
-from PySide6.QtGui import QAction
-from PySide6.QtCore import Qt
+import os
 
-from src.gui.execution_window import ExecutionWindow
-from src.gui.widgets.thread_tab import ThreadTab
-from src.gui.properties import PropertyEditor
+from PySide6.QtCore import Qt, QPointF
+from PySide6.QtGui import QAction
+from PySide6.QtWidgets import (QMainWindow, QTabWidget, QDockWidget,
+                               QMessageBox, QToolBar, QStyle, QFileDialog)
+
 from src.core.models import Project, ThreadModel
-from src.gui.canvas.items import BlockItem
-from PySide6.QtWidgets import QTextEdit, QDialog, QVBoxLayout, QPushButton, QFileDialog
+from src.core.serializer import ProjectSerializer
+from src.core.validator import ProjectValidator
+from src.gui.canvas.items import BlockItem, ConnectionItem
+from src.gui.execution_window import ExecutionWindow
+from src.gui.properties import PropertyEditor
+from src.gui.widgets.thread_tab import ThreadTab
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -16,60 +20,62 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("MultiThread Flow Translator")
         self.resize(1200, 800)
 
-        # Головна структура даних
         self.project = Project()
 
-        # 1. Центральний віджет (Вкладки)
         self.tab_widget = QTabWidget()
         self.tab_widget.setTabsClosable(True)
         self.tab_widget.tabCloseRequested.connect(self.close_thread_tab)
         self.tab_widget.currentChanged.connect(self.on_tab_changed)
         self.setCentralWidget(self.tab_widget)
 
-        # 2. Док-станція (Властивості)
         self.property_editor = PropertyEditor()
         self.prop_dock = QDockWidget("Властивості", self)
         self.prop_dock.setWidget(self.property_editor)
         self.addDockWidget(Qt.RightDockWidgetArea, self.prop_dock)
 
-        # 3. Меню та Тулбар
         self._setup_ui()
 
-        # Створюємо початковий потік
-        self.add_new_thread()
+        if not self.project.threads:
+            self.add_new_thread()
 
     def _setup_ui(self):
-        # 1. Створення дій (Actions)
+        save_act = QAction("Зберегти проект...", self)
+        save_act.setShortcut("Ctrl+S")
+        save_act.triggered.connect(self.save_project)
 
-        # Дія: Додати потік
+        load_act = QAction("Відкрити проект...", self)
+        load_act.setShortcut("Ctrl+O")
+        load_act.triggered.connect(self.load_project)
+
         add_thread_act = QAction(self.style().standardIcon(QStyle.SP_FileIcon), "Додати потік", self)
         add_thread_act.setShortcut("Ctrl+T")
         add_thread_act.triggered.connect(self.add_new_thread)
 
-        # Дія: Транслювати (Генерувати код)
         run_act = QAction(self.style().standardIcon(QStyle.SP_MediaPlay), "Транслювати", self)
         run_act.setShortcut("F5")
         run_act.triggered.connect(self.run_translation)
 
-        # 2. Налаштування Меню (Верхня смужка: Файл, Інструменти...)
         menubar = self.menuBar()
 
         file_menu = menubar.addMenu("Файл")
         file_menu.addAction(add_thread_act)
-        file_menu.addAction(run_act)
+        file_menu.addSeparator()
+        file_menu.addAction(save_act)
+        file_menu.addAction(load_act)
         file_menu.addSeparator()
         file_menu.addAction("Вихід", self.close)
 
-        # 3. Налаштування Панелі інструментів (Toolbar)
         toolbar = QToolBar("Інструменти")
         self.addToolBar(toolbar)
 
         toolbar.addAction(add_thread_act)
-        toolbar.addAction(run_act)  # <--- ОСЬ ТУТ МИ ДОДАЄМО КНОПКУ!
+        toolbar.addAction(save_act)
+        toolbar.addAction(load_act)
+        toolbar.addSeparator()
+        toolbar.addAction(run_act)
 
         toolbar.addSeparator()
 
-        # Кнопки додавання блоків
         for b_type in ["START", "ASSIGN", "DECISION", "INPUT", "PRINT", "END"]:
             act = QAction(f"+ {b_type}", self)
             act.triggered.connect(lambda checked=False, t=b_type: self.add_block_to_current(t))
@@ -80,12 +86,15 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, "Ліміт", "Максимум 100 потоків!")
             return
 
-        new_id = len(self.project.threads) + 1
+        if self.project.threads:
+            new_id = max(t.id for t in self.project.threads) + 1
+        else:
+            new_id = 1
+
         model = ThreadModel(id=new_id, name=f"Thread {new_id}")
         self.project.threads.append(model)
 
         tab = ThreadTab(model)
-        # Підписуємось на виділення у сцені цієї вкладки
         tab.view.scene.selectionChanged.connect(self.on_selection_changed)
 
         self.tab_widget.addTab(tab, model.name)
@@ -101,15 +110,12 @@ class MainWindow(QMainWindow):
             self.project.threads.pop(index)
 
     def add_block_to_current(self, block_type):
-        """Додає блок у поточну активну вкладку."""
         current_tab = self.tab_widget.currentWidget()
         if current_tab:
-            # Додаємо трохи зміщення, щоб блоки не накладалися
-            pos_x = 50 + len(current_tab.thread_model.blocks) * 20
-            pos_y = 50 + len(current_tab.thread_model.blocks) * 20
+            offset = len(current_tab.thread_model.blocks) * 20
+            pos_x = 50 + offset
+            pos_y = 50 + offset
 
-            # Викликаємо метод сцени (через view)
-            from PySide6.QtCore import QPointF
             current_tab.view.scene.add_block(block_type, QPointF(pos_x, pos_y))
 
     def on_tab_changed(self, index):
@@ -126,40 +132,94 @@ class MainWindow(QMainWindow):
             return
 
         item = selected[0]
-        # Перевіряємо, чи це BlockItem (а не стрілка ConnectionItem)
         if isinstance(item, BlockItem):
             self.property_editor.set_block(item)
         else:
             self.property_editor.set_block(None)
 
     def run_translation(self):
-        if not self.project.threads:
+        is_valid, errors = ProjectValidator.validate(self.project)
+
+        if not is_valid:
+            msg_text = "Знайдено помилки у проекті:\n"
+            for err in errors[:10]:
+                msg_text += f"- {err}\n"
+            if len(errors) > 10:
+                msg_text += f"... і ще {len(errors) - 10} помилок."
+
+            QMessageBox.critical(self, "Помилка валідації", msg_text)
             return
 
         exec_window = ExecutionWindow(self.project, self)
         exec_window.exec()
 
-    def _show_code_dialog(self, code):
-        dialog = QDialog(self)
-        dialog.setWindowTitle("Згенерований код Python")
-        dialog.resize(600, 500)
+    def save_project(self):
+        file_path, _ = QFileDialog.getSaveFileName(
+            self, "Зберегти проект", "", "JSON Files (*.json)"
+        )
+        if not file_path:
+            return
 
-        layout = QVBoxLayout(dialog)
+        try:
+            json_data = ProjectSerializer.serialize(self.project)
+            with open(file_path, 'w', encoding='utf-8') as f:
+                f.write(json_data)
+            self.statusBar().showMessage(f"Проект збережено: {os.path.basename(file_path)}", 3000)
+        except Exception as e:
+            QMessageBox.critical(self, "Помилка збереження", str(e))
 
-        text_edit = QTextEdit()
-        text_edit.setPlainText(code)
-        text_edit.setReadOnly(True)
-        text_edit.setFontFamily("Consolas")  # Або "Courier New"
-        layout.addWidget(text_edit)
+    def load_project(self):
+        file_path, _ = QFileDialog.getOpenFileName(
+            self, "Відкрити проект", "", "JSON Files (*.json)"
+        )
+        if not file_path:
+            return
 
-        btn_save = QPushButton("Зберегти у файл...")
-        btn_save.clicked.connect(lambda: self._save_code_to_file(code))
-        layout.addWidget(btn_save)
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                json_data = f.read()
 
-        dialog.exec()
+            new_project = ProjectSerializer.deserialize(json_data)
+            self._rebuild_gui_from_project(new_project)
 
-    def _save_code_to_file(self, code):
-        filename, _ = QFileDialog.getSaveFileName(self, "Зберегти Python файл", "", "Python Files (*.py)")
-        if filename:
-            with open(filename, 'w', encoding='utf-8') as f:
-                f.write(code)
+            self.statusBar().showMessage(f"Проект завантажено: {os.path.basename(file_path)}", 3000)
+
+        except Exception as e:
+            QMessageBox.critical(self, "Помилка завантаження", f"Не вдалося відкрити файл:\n{e}")
+
+    def _rebuild_gui_from_project(self, new_project):
+        """Перебудовує GUI на основі завантаженого проекту."""
+        self.tab_widget.clear()
+        self.project = new_project
+        self.property_editor.set_block(None)
+
+        for thread in self.project.threads:
+            tab = ThreadTab(thread)
+            tab.view.scene.selectionChanged.connect(self.on_selection_changed)
+            self.tab_widget.addTab(tab, thread.name)
+
+            scene = tab.view.scene
+            id_to_item_map = {}
+
+            for block_model in thread.blocks:
+                item = BlockItem(block_model)
+                scene.addItem(item)
+                id_to_item_map[block_model.id] = item
+
+            for block_model in thread.blocks:
+                source_item = id_to_item_map.get(block_model.id)
+                if not source_item: continue
+
+                def connect_items(target_id):
+                    if target_id is None: return
+                    dest_item = id_to_item_map.get(target_id)
+                    if dest_item:
+                        conn = ConnectionItem(source_item, dest_item)
+                        scene.addItem(conn)
+
+                connect_items(block_model.next_id)
+                connect_items(block_model.true_next_id)
+                connect_items(block_model.false_next_id)
+
+        if self.tab_widget.count() == 0:
+            self.add_new_thread()
