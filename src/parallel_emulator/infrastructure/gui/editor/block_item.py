@@ -1,7 +1,11 @@
 from dataclasses import replace
+
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QBrush, QPen, QColor, QFont
-from PyQt6.QtWidgets import QGraphicsRectItem, QGraphicsTextItem, QGraphicsEllipseItem, QGraphicsItem
+from PyQt6.QtWidgets import (
+    QGraphicsRectItem, QGraphicsTextItem, QGraphicsEllipseItem,
+    QGraphicsItem, QMenu
+)
 
 from src.parallel_emulator.domain.entities.block import Block
 from src.parallel_emulator.domain.enums.block_type import BlockType
@@ -25,23 +29,23 @@ class BlockItem(QGraphicsRectItem):
         self.text_item.setFont(QFont("Segoe UI", 10, QFont.Weight.Bold))
         self.text_item.setPos(10, 8)
 
+        # Параметри
+        self.param_text = QGraphicsTextItem(self._get_param_text(), self)
+        self.param_text.setPos(10, 38)
+        self.param_text.setFont(QFont("Segoe UI", 8))
+
         # Порти
-        self.out_port = QGraphicsEllipseItem(62, self.HEIGHT - 8, 16, 16, self)  # bottom center
+        self.out_port = QGraphicsEllipseItem(62, self.HEIGHT - 8, 16, 16, self)
         self.out_port.setBrush(QBrush(QColor(0, 180, 0)))
         self.out_port.setPen(QPen(Qt.GlobalColor.black))
 
         self.true_port = None
         self.false_port = None
         if block.type == BlockType.DECISION:
-            self.true_port = QGraphicsEllipseItem(self.WIDTH - 20, 25, 16, 16, self)  # right
+            self.true_port = QGraphicsEllipseItem(self.WIDTH - 20, 25, 16, 16, self)
             self.true_port.setBrush(QBrush(QColor(0, 200, 0)))
-            self.false_port = QGraphicsEllipseItem(4, 25, 16, 16, self)  # left
+            self.false_port = QGraphicsEllipseItem(4, 25, 16, 16, self)
             self.false_port.setBrush(QBrush(QColor(220, 0, 0)))
-
-        # Параметри (для відображення)
-        self.param_text = QGraphicsTextItem(self._get_param_text(), self)
-        self.param_text.setPos(10, 38)
-        self.param_text.setFont(QFont("Segoe UI", 8))
 
     def _get_brush(self) -> QBrush:
         colors = {
@@ -65,7 +69,6 @@ class BlockItem(QGraphicsRectItem):
 
     def itemChange(self, change, value):
         if change == QGraphicsItem.GraphicsItemChange.ItemPositionHasChanged:
-            # оновлюємо координати в моделі
             new_block = replace(self.block, x=float(self.pos().x()), y=float(self.pos().y()))
             self.block = new_block
             if hasattr(self.scene(), "on_block_moved"):
@@ -75,3 +78,22 @@ class BlockItem(QGraphicsRectItem):
     def mouseDoubleClickEvent(self, event):
         if hasattr(self.scene(), "edit_block"):
             self.scene().edit_block(self)
+
+    # ==================== ПРАВА КНОПКА МИШІ ====================
+    def contextMenuEvent(self, event):
+        menu = QMenu()
+
+        edit_action = menu.addAction("Редагувати блок")
+        delete_action = menu.addAction("Видалити блок")
+
+        # Забороняємо редагування START і END
+        edit_action.setEnabled(self.block.type not in (BlockType.START, BlockType.END))
+
+        chosen = menu.exec(event.screenPos())
+
+        if chosen == edit_action:
+            if hasattr(self.scene(), "edit_block"):
+                self.scene().edit_block(self)
+        elif chosen == delete_action:
+            if hasattr(self.scene(), "remove_block"):
+                self.scene().remove_block(self)

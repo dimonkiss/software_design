@@ -83,22 +83,63 @@ class FlowchartScene(QGraphicsScene):
         self.block_changed.emit()
 
     def add_block(self, block_type: BlockType, pos: QPointF):
+        """Створює блок з усіма обов'язковими полями одразу — проходить __post_init__"""
         new_id = max(self.thread.blocks.keys(), default=0) + 1
-        block = Block(id=new_id, type=block_type, x=pos.x(), y=pos.y())
-        if block_type == BlockType.ASSIGN:
-            block = replace(block, target="var0", source=Source(type="const", value=0))
+
+        if block_type == BlockType.START:
+            block = Block(
+                id=new_id,
+                type=block_type,
+                x=pos.x(),
+                y=pos.y(),
+                next=new_id + 1
+            )
+        elif block_type == BlockType.END:
+            block = Block(
+                id=new_id,
+                type=block_type,
+                x=pos.x(),
+                y=pos.y()
+            )
+        elif block_type == BlockType.ASSIGN:
+            block = Block(
+                id=new_id,
+                type=block_type,
+                x=pos.x(),
+                y=pos.y(),
+                target="var0",
+                source=Source(type="const", value=0),
+                next=new_id + 1
+            )
         elif block_type in (BlockType.INPUT, BlockType.PRINT):
-            block = replace(block, io_var="var0")
+            block = Block(
+                id=new_id,
+                type=block_type,
+                x=pos.x(),
+                y=pos.y(),
+                io_var="var0",
+                next=new_id + 1
+            )
         elif block_type == BlockType.DECISION:
-            block = replace(block, condition=Condition(var="var0", op="<", const=0),
-                            true_next=None, false_next=None)
+            block = Block(
+                id=new_id,
+                type=block_type,
+                x=pos.x(),
+                y=pos.y(),
+                condition=Condition(var="var0", op="<", const=0),
+                true_next=new_id + 1,
+                false_next=new_id + 2
+            )
 
-        self.thread.add_block(block)   # додає в модель
+        # Додаємо в модель потоку
+        self.thread.add_block(block)
 
+        # Створюємо візуальний елемент
         item = BlockItem(block)
         item.setPos(pos)
         self.addItem(item)
         self.block_items[new_id] = item
+
         self.block_changed.emit()
 
     def edit_block(self, item: BlockItem):
@@ -109,3 +150,26 @@ class FlowchartScene(QGraphicsScene):
             item.block = new_block
             item.param_text.setPlainText(item._get_param_text())
             self.block_changed.emit()
+
+    def remove_block(self, item: BlockItem):
+        """Видаляє блок + всі зв’язки до/від нього"""
+        block_id = item.block.id
+
+        if block_id in self.thread.blocks:
+            del self.thread.blocks[block_id]
+
+        self.removeItem(item)
+        if block_id in self.block_items:
+            del self.block_items[block_id]
+
+        to_remove = []
+        for conn in self.connections[:]:
+            if (conn.start_item.block.id == block_id or
+                conn.end_item.block.id == block_id):
+                to_remove.append(conn)
+
+        for conn in to_remove:
+            self.removeItem(conn)
+            self.connections.remove(conn)
+
+        self.block_changed.emit()
