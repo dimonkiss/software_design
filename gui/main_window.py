@@ -124,12 +124,12 @@ class MainWindow(tk.Tk):
         )
         self._thread_listbox.pack(fill=tk.BOTH, expand=True, padx=4)
         self._thread_listbox.bind("<<ListboxSelect>>", self._on_select_thread)
+        self._thread_listbox.bind("<Double-Button-1>", lambda _e: self._rename_thread())
 
         btn_row = ttk.Frame(left)
         btn_row.pack(fill=tk.X, padx=4, pady=(4, 6))
         ttk.Button(btn_row, text="+", width=3, command=self._add_thread).pack(side=tk.LEFT, padx=2)
         ttk.Button(btn_row, text="–", width=3, command=self._remove_thread).pack(side=tk.LEFT, padx=2)
-        ttk.Button(btn_row, text="✎", width=3, command=self._rename_thread).pack(side=tk.LEFT, padx=2)
 
         # ── Right: toolbar + canvas ───────────────────────────────────
         right = ttk.Frame(paned)
@@ -146,32 +146,39 @@ class MainWindow(tk.Tk):
         self._canvas_placeholder.pack(fill=tk.BOTH, expand=True)
 
     def _build_canvas_toolbar(self, parent: tk.Widget) -> None:
-        tb = ttk.Frame(parent, relief=tk.RIDGE, borderwidth=1)
-        tb.pack(fill=tk.X, pady=(2, 0))
+        wrapper = ttk.Frame(parent)
+        wrapper.pack(fill=tk.X, pady=(2, 0))
 
-        def _mode_btn(text: str, cmd, tip: str = "") -> ttk.Button:
-            b = ttk.Button(tb, text=text, width=9, command=cmd)
-            b.pack(side=tk.LEFT, padx=2, pady=2)
-            return b
+        # ── Row 1: block types ────────────────────────────────────────────
+        row1 = ttk.LabelFrame(wrapper, text="Blocks", padding=(4, 2))
+        row1.pack(fill=tk.X, padx=4, pady=(2, 1))
 
-        _mode_btn("↖ Select",    self._mode_select)
-        ttk.Separator(tb, orient=tk.VERTICAL).pack(side=tk.LEFT, fill=tk.Y, padx=4, pady=3)
+        for text, bt in (
+            ("START",     BlockType.START),
+            ("END",       BlockType.END),
+            ("ASSIGN",    BlockType.ASSIGN),
+            ("INPUT",     BlockType.INPUT),
+            ("PRINT",     BlockType.PRINT),
+            ("CONDITION", BlockType.CONDITION),
+        ):
+            ttk.Button(row1, text=text, width=9,
+                       command=lambda b=bt: self._mode_add(b)).pack(
+                side=tk.LEFT, padx=2, pady=1)
 
-        _mode_btn("START",      lambda: self._mode_add(BlockType.START))
-        _mode_btn("END",        lambda: self._mode_add(BlockType.END))
-        _mode_btn("ASSIGN",     lambda: self._mode_add(BlockType.ASSIGN))
-        _mode_btn("INPUT",      lambda: self._mode_add(BlockType.INPUT))
-        _mode_btn("PRINT",      lambda: self._mode_add(BlockType.PRINT))
-        _mode_btn("CONDITION",  lambda: self._mode_add(BlockType.CONDITION))
-        ttk.Separator(tb, orient=tk.VERTICAL).pack(side=tk.LEFT, fill=tk.Y, padx=4, pady=3)
+        # ── Row 2: operations ─────────────────────────────────────────────
+        row2 = ttk.LabelFrame(wrapper, text="Operations", padding=(4, 2))
+        row2.pack(fill=tk.X, padx=4, pady=(1, 2))
 
-        _mode_btn("↔ Connect",  self._mode_connect)
-        _mode_btn("🗑 Delete",   self._delete_selected)
-        ttk.Separator(tb, orient=tk.VERTICAL).pack(side=tk.LEFT, fill=tk.Y, padx=4, pady=3)
+        for text, cmd in (
+            ("↖ Select",   self._mode_select),
+            ("↔ Connect",  self._mode_connect),
+            ("🗑 Delete",   self._delete_selected),
+            ("✔ Validate", self._cmd_validate),
+        ):
+            ttk.Button(row2, text=text, width=10, command=cmd).pack(
+                side=tk.LEFT, padx=2, pady=1)
 
-        _mode_btn("✔ Validate", self._cmd_validate)
-
-        self._mode_label = ttk.Label(tb, text="Mode: SELECT", foreground="navy",
+        self._mode_label = ttk.Label(row2, text="Mode: SELECT", foreground="navy",
                                      font=("Helvetica", 9, "bold"))
         self._mode_label.pack(side=tk.RIGHT, padx=8)
 

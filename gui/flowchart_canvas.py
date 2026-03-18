@@ -263,6 +263,7 @@ class FlowchartCanvas(ttk.Frame):
                          tags=(tag, "block", "block_shape"))
         c.create_text(block.x, block.y, text=block.get_multiline_label(),
                       font=FONT_BOLD if block.block_type in (BlockType.START, BlockType.END) else FONT,
+                      fill="#111111",
                       justify=tk.CENTER, tags=(tag, "block", "block_text"))
 
         if block.block_type == BlockType.CONDITION:
