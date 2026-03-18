@@ -64,26 +64,34 @@ class PythonTranslator:
         # ── infrastructure ───────────────────────────────────────────────────
         lines += [
             "# ── Synchronisation primitives ──",
-            "_shared_lock  = threading.Lock()  # protects all shared variables",
-            "_output_lock  = threading.Lock()  # serialises stdout",
-            "_input_lock   = threading.Lock()  # serialises stdin token consumption",
-            "",
-            "# ── Input buffer ──",
-            "_input_tokens: list[int] = []",
-            "_input_pos: int = 0",
-            "",
-            "",
-            "def _consume_input() -> int:",
-            f"{_I1}global _input_pos",
-            f"{_I1}with _input_lock:",
-            f"{_I2}if _input_pos >= len(_input_tokens):",
-            f"{_I3}raise EOFError('No more input available')",
-            f"{_I2}value = _input_tokens[_input_pos]",
-            f"{_I2}_input_pos += 1",
-            f"{_I2}return value",
-            "",
+            "_shared_lock = threading.Lock()  # protects all shared variables",
+            "_output_lock = threading.Lock()  # serialises stdout",
+            "_input_lock  = threading.Lock()  # one thread reads stdin at a time",
             "",
         ]
+        # _consume_input written as a plain indented string to avoid any
+        # f-string indentation arithmetic mistakes.
+        lines.append(
+            "def _consume_input() -> int:\n"
+            '    """Read one integer from stdin; shows ">>> " prompt each attempt."""\n'
+            "    with _input_lock:\n"
+            "        while True:\n"
+            '            sys.stderr.write(">>> ")\n'
+            "            sys.stderr.flush()\n"
+            "            raw = sys.stdin.readline()\n"
+            "            if not raw:\n"
+            "                raise EOFError('stdin closed')\n"
+            "            stripped = raw.strip()\n"
+            "            if not stripped:\n"
+            "                continue  # blank Enter – ask again silently\n"
+            "            try:\n"
+            "                return int(stripped) & 0xFFFF_FFFF\n"
+            "            except ValueError:\n"
+            "                sys.stderr.write(\n"
+            "                    f'Expected integer, got {stripped!r}\\n')\n"
+            "                sys.stderr.flush()\n"
+        )
+        lines.append("")
 
         # ── thread functions ─────────────────────────────────────────────────
         for idx, fc in enumerate(program.flowcharts):
@@ -175,7 +183,7 @@ class PythonTranslator:
         elif bt == BlockType.PRINT:
             var = block.content.get("var", "_x")
             lines.append("with _output_lock:")
-            lines.append(f"    print({var})")
+            lines.append(f"    print({var}, flush=True)")
             lines.append(f"_pc = {next_pc()}")
 
         elif bt == BlockType.CONDITION:
@@ -194,16 +202,10 @@ class PythonTranslator:
     def _build_main(self, n_threads: int, all_vars: List[str]) -> List[str]:
         lines: List[str] = [
             "def main() -> None:",
-            f"{_I1}global _input_tokens, _input_pos",
         ]
         if all_vars:
             lines.append(f"{_I1}global {', '.join(all_vars)}")
         lines += [
-            "",
-            f"{_I1}# Read all input tokens up-front",
-            f"{_I1}raw = sys.stdin.read()",
-            f"{_I1}_input_tokens = [int(t) for t in raw.split() if t.strip().lstrip('-').isdigit()]",
-            f"{_I1}_input_pos = 0",
             "",
             f"{_I1}threads = [",
         ]
