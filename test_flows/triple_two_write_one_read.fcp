@@ -1,0 +1,154 @@
+{
+  "name": "triple_two_write_one_read",
+  "flowcharts": [
+    {
+      "id": "032c1feb-4b4e-47d8-a8b1-70d494c474f5",
+      "name": "Writer-1",
+      "blocks": {
+        "a330f4ae-6a28-4488-8255-22d6ddf3d31e": {
+          "id": "a330f4ae-6a28-4488-8255-22d6ddf3d31e",
+          "block_type": "start",
+          "content": {},
+          "x": 100,
+          "y": 80,
+          "next_blocks": [
+            "fd8b757f-1fa2-4bdb-a397-bf0d7b6fcdf9"
+          ]
+        },
+        "fd8b757f-1fa2-4bdb-a397-bf0d7b6fcdf9": {
+          "id": "fd8b757f-1fa2-4bdb-a397-bf0d7b6fcdf9",
+          "block_type": "assign",
+          "content": {
+            "target": "x",
+            "src_type": "const",
+            "source": "10"
+          },
+          "x": 100,
+          "y": 160,
+          "next_blocks": [
+            "98370fe4-95f6-4692-a3a2-4759c528b7ba"
+          ]
+        },
+        "98370fe4-95f6-4692-a3a2-4759c528b7ba": {
+          "id": "98370fe4-95f6-4692-a3a2-4759c528b7ba",
+          "block_type": "end",
+          "content": {},
+          "x": 100,
+          "y": 240,
+          "next_blocks": []
+        }
+      },
+      "start_block_id": "a330f4ae-6a28-4488-8255-22d6ddf3d31e"
+    },
+    {
+      "id": "196250b8-487c-4952-b0b4-59a4578c0385",
+      "name": "Writer-2",
+      "blocks": {
+        "3bdb7a24-1382-46e5-b4af-a5e8dc45f6ca": {
+          "id": "3bdb7a24-1382-46e5-b4af-a5e8dc45f6ca",
+          "block_type": "start",
+          "content": {},
+          "x": 250,
+          "y": 80,
+          "next_blocks": [
+            "a246f30a-e15f-49cf-b024-fb45f9658107"
+          ]
+        },
+        "a246f30a-e15f-49cf-b024-fb45f9658107": {
+          "id": "a246f30a-e15f-49cf-b024-fb45f9658107",
+          "block_type": "assign",
+          "content": {
+            "target": "x",
+            "src_type": "const",
+            "source": "20"
+          },
+          "x": 250,
+          "y": 160,
+          "next_blocks": [
+            "3522c41d-164d-4237-b6b6-80192c48ed87"
+          ]
+        },
+        "3522c41d-164d-4237-b6b6-80192c48ed87": {
+          "id": "3522c41d-164d-4237-b6b6-80192c48ed87",
+          "block_type": "end",
+          "content": {},
+          "x": 250,
+          "y": 240,
+          "next_blocks": []
+        }
+      },
+      "start_block_id": "3bdb7a24-1382-46e5-b4af-a5e8dc45f6ca"
+    },
+    {
+      "id": "4a0554a3-844c-4e8e-896f-1784e06ac39f",
+      "name": "Snapshot",
+      "blocks": {
+        "83547920-cd4d-4920-a3f2-3fe774f87c5f": {
+          "id": "83547920-cd4d-4920-a3f2-3fe774f87c5f",
+          "block_type": "start",
+          "content": {},
+          "x": 400,
+          "y": 80,
+          "next_blocks": [
+            "413e2665-90b8-4674-b2a9-c8af195ed297"
+          ]
+        },
+        "413e2665-90b8-4674-b2a9-c8af195ed297": {
+          "id": "413e2665-90b8-4674-b2a9-c8af195ed297",
+          "block_type": "assign",
+          "content": {
+            "target": "y",
+            "src_type": "var",
+            "source": "x"
+          },
+          "x": 400,
+          "y": 160,
+          "next_blocks": [
+            "63f9215d-2c08-40d6-ba2c-b3306156aa40"
+          ]
+        },
+        "63f9215d-2c08-40d6-ba2c-b3306156aa40": {
+          "id": "63f9215d-2c08-40d6-ba2c-b3306156aa40",
+          "block_type": "print",
+          "content": {
+            "var": "y"
+          },
+          "x": 400,
+          "y": 240,
+          "next_blocks": [
+            "5cfbc283-689e-4dd2-83f1-d979abd8825e"
+          ]
+        },
+        "5cfbc283-689e-4dd2-83f1-d979abd8825e": {
+          "id": "5cfbc283-689e-4dd2-83f1-d979abd8825e",
+          "block_type": "end",
+          "content": {},
+          "x": 400,
+          "y": 320,
+          "next_blocks": []
+        }
+      },
+      "start_block_id": "83547920-cd4d-4920-a3f2-3fe774f87c5f"
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "bb38ee52-53c4-4ae2-af19-7ed212130b41",
+      "name": "snapshot before writes → 0",
+      "input_data": "",
+      "expected_output": "0"
+    },
+    {
+      "id": "787d1b98-8445-48e0-8517-ab8b125804f3",
+      "name": "snapshot after Writer-1 → 10",
+      "input_data": "",
+      "expected_output": "10"
+    },
+    {
+      "id": "00e05feb-9e3f-49a1-ae5a-2f918cec7ff6",
+      "name": "snapshot after Writer-2 → 20",
+      "input_data": "",
+      "expected_output": "20"
+    }
+  ]
+}

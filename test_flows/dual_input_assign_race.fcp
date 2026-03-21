@@ -1,0 +1,107 @@
+{
+  "name": "dual_input_assign_race",
+  "flowcharts": [
+    {
+      "id": "00f8222a-c74a-4006-89b9-b506f7b82f0d",
+      "name": "InputThread",
+      "blocks": {
+        "28228742-35bd-4c78-81d2-59cec4688ab1": {
+          "id": "28228742-35bd-4c78-81d2-59cec4688ab1",
+          "block_type": "start",
+          "content": {},
+          "x": 150,
+          "y": 80,
+          "next_blocks": [
+            "7cc39b73-7c84-4fb1-aabf-a591bc6896a7"
+          ]
+        },
+        "7cc39b73-7c84-4fb1-aabf-a591bc6896a7": {
+          "id": "7cc39b73-7c84-4fb1-aabf-a591bc6896a7",
+          "block_type": "input",
+          "content": {
+            "var": "x"
+          },
+          "x": 150,
+          "y": 160,
+          "next_blocks": [
+            "3fa08405-168f-4cce-a4ff-58c1b770cf90"
+          ]
+        },
+        "3fa08405-168f-4cce-a4ff-58c1b770cf90": {
+          "id": "3fa08405-168f-4cce-a4ff-58c1b770cf90",
+          "block_type": "end",
+          "content": {},
+          "x": 150,
+          "y": 240,
+          "next_blocks": []
+        }
+      },
+      "start_block_id": "28228742-35bd-4c78-81d2-59cec4688ab1"
+    },
+    {
+      "id": "83bd3077-bf0f-4fc7-86a9-501facffe3ba",
+      "name": "ResetPrinter",
+      "blocks": {
+        "c2b8a176-20af-40cb-9c52-d358572c9bfc": {
+          "id": "c2b8a176-20af-40cb-9c52-d358572c9bfc",
+          "block_type": "start",
+          "content": {},
+          "x": 350,
+          "y": 80,
+          "next_blocks": [
+            "871ca52b-11f1-4ac4-92c6-b8f7bcf235d9"
+          ]
+        },
+        "871ca52b-11f1-4ac4-92c6-b8f7bcf235d9": {
+          "id": "871ca52b-11f1-4ac4-92c6-b8f7bcf235d9",
+          "block_type": "assign",
+          "content": {
+            "target": "x",
+            "src_type": "const",
+            "source": "0"
+          },
+          "x": 350,
+          "y": 160,
+          "next_blocks": [
+            "dca6437e-c2c8-4b42-8c3d-6a2f58b6c023"
+          ]
+        },
+        "dca6437e-c2c8-4b42-8c3d-6a2f58b6c023": {
+          "id": "dca6437e-c2c8-4b42-8c3d-6a2f58b6c023",
+          "block_type": "print",
+          "content": {
+            "var": "x"
+          },
+          "x": 350,
+          "y": 240,
+          "next_blocks": [
+            "b3ad3390-994a-4c05-bfff-6351be9622c8"
+          ]
+        },
+        "b3ad3390-994a-4c05-bfff-6351be9622c8": {
+          "id": "b3ad3390-994a-4c05-bfff-6351be9622c8",
+          "block_type": "end",
+          "content": {},
+          "x": 350,
+          "y": 320,
+          "next_blocks": []
+        }
+      },
+      "start_block_id": "c2b8a176-20af-40cb-9c52-d358572c9bfc"
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "2fa99a3c-c222-420c-877e-cba6e50dd1e8",
+      "name": "T2 prints own 0",
+      "input_data": "7",
+      "expected_output": "0"
+    },
+    {
+      "id": "64d4d8fe-08d9-4c3a-b965-1b24b3ca759c",
+      "name": "T1 first then T2 resets → 0",
+      "input_data": "7",
+      "expected_output": "0"
+    }
+  ]
+}

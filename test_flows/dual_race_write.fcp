@@ -1,0 +1,109 @@
+{
+  "name": "dual_race_write",
+  "flowcharts": [
+    {
+      "id": "6c9bdb5c-3623-44d4-8a76-4592217582f4",
+      "name": "Writer-1",
+      "blocks": {
+        "81751534-0621-49d8-b78a-de5ca6f29409": {
+          "id": "81751534-0621-49d8-b78a-de5ca6f29409",
+          "block_type": "start",
+          "content": {},
+          "x": 150,
+          "y": 80,
+          "next_blocks": [
+            "79c67c75-ddeb-44b3-9551-cec93c1caf20"
+          ]
+        },
+        "79c67c75-ddeb-44b3-9551-cec93c1caf20": {
+          "id": "79c67c75-ddeb-44b3-9551-cec93c1caf20",
+          "block_type": "assign",
+          "content": {
+            "target": "x",
+            "src_type": "const",
+            "source": "10"
+          },
+          "x": 150,
+          "y": 160,
+          "next_blocks": [
+            "444f71db-9c0f-47c7-99d1-62d19515f01c"
+          ]
+        },
+        "444f71db-9c0f-47c7-99d1-62d19515f01c": {
+          "id": "444f71db-9c0f-47c7-99d1-62d19515f01c",
+          "block_type": "print",
+          "content": {
+            "var": "x"
+          },
+          "x": 150,
+          "y": 240,
+          "next_blocks": [
+            "b64e9b7d-0db5-4693-9f78-0b988b908b03"
+          ]
+        },
+        "b64e9b7d-0db5-4693-9f78-0b988b908b03": {
+          "id": "b64e9b7d-0db5-4693-9f78-0b988b908b03",
+          "block_type": "end",
+          "content": {},
+          "x": 150,
+          "y": 320,
+          "next_blocks": []
+        }
+      },
+      "start_block_id": "81751534-0621-49d8-b78a-de5ca6f29409"
+    },
+    {
+      "id": "62b00f98-fb25-4446-a6ac-72bb65812352",
+      "name": "Writer-2",
+      "blocks": {
+        "a3476609-fd6d-43c5-8e53-8f97b9716f3f": {
+          "id": "a3476609-fd6d-43c5-8e53-8f97b9716f3f",
+          "block_type": "start",
+          "content": {},
+          "x": 350,
+          "y": 80,
+          "next_blocks": [
+            "b5a9c1f6-1b62-43f2-ba65-f580750987ad"
+          ]
+        },
+        "b5a9c1f6-1b62-43f2-ba65-f580750987ad": {
+          "id": "b5a9c1f6-1b62-43f2-ba65-f580750987ad",
+          "block_type": "assign",
+          "content": {
+            "target": "x",
+            "src_type": "const",
+            "source": "20"
+          },
+          "x": 350,
+          "y": 160,
+          "next_blocks": [
+            "45e77f3c-3e3b-45d1-bdeb-3e36dce709b4"
+          ]
+        },
+        "45e77f3c-3e3b-45d1-bdeb-3e36dce709b4": {
+          "id": "45e77f3c-3e3b-45d1-bdeb-3e36dce709b4",
+          "block_type": "end",
+          "content": {},
+          "x": 350,
+          "y": 240,
+          "next_blocks": []
+        }
+      },
+      "start_block_id": "a3476609-fd6d-43c5-8e53-8f97b9716f3f"
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "4c3baced-86ee-4c98-95e5-cd403af69c1d",
+      "name": "x=10 if T1 prints own value",
+      "input_data": "",
+      "expected_output": "10"
+    },
+    {
+      "id": "0ed27df5-ea08-4539-8f7a-282e81407e4e",
+      "name": "x=20 if T2 overwrites first",
+      "input_data": "",
+      "expected_output": "20"
+    }
+  ]
+}

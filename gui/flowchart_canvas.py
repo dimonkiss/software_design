@@ -131,12 +131,12 @@ def _boundary_point(block: Block, tx: float, ty: float) -> Tuple[float, float]:
 def _condition_exit_point(block: Block, branch: int) -> Tuple[float, float]:
     """
     Return the canonical exit point for a CONDITION block.
-    branch 0 → right vertex (TRUE), branch 1 → bottom vertex (FALSE).
+    branch 0 → right vertex (TRUE), branch 1 → left vertex (FALSE).
     """
     x, y = block.x, block.y
     if branch == 0:
         return x + DS, y
-    return x, y + DH
+    return x - DS, y
 
 
 # ═══════════════════════════════════════════════════════════════════ widget
@@ -271,8 +271,8 @@ class FlowchartCanvas(ttk.Frame):
             x, y = block.x, block.y
             c.create_text(x + DS + 8, y - 6, text="T", fill="green",
                           font=("Helvetica", 8, "bold"), anchor=tk.W, tags=("conn_label",))
-            c.create_text(x + 6, y + DH + 8, text="F", fill="red",
-                          font=("Helvetica", 8, "bold"), anchor=tk.W, tags=("conn_label",))
+            c.create_text(x - DS - 8, y - 6, text="F", fill="red",
+                          font=("Helvetica", 8, "bold"), anchor=tk.E, tags=("conn_label",))
 
     def _draw_connection(self, src: Block, dst_id: str, branch_idx: int) -> None:
         dst = self.flowchart.blocks.get(dst_id)
@@ -501,7 +501,8 @@ class FlowchartCanvas(ttk.Frame):
 
         branch: Optional[str] = None
         if src.block_type == BlockType.CONDITION:
-            if len(src.next_blocks) >= 2:
+            connected = [nid for nid in src.next_blocks if nid and nid in self.flowchart.blocks]
+            if len(connected) >= 2:
                 messagebox.showerror("Connection",
                     "CONDITION block already has both branches connected.\n"
                     "Delete an existing connection first.",

@@ -1,0 +1,92 @@
+{
+  "name": "single_copy_chain",
+  "flowcharts": [
+    {
+      "id": "557b1dde-d826-4a61-bb9b-1830b1b73b14",
+      "name": "Main",
+      "blocks": {
+        "022c544a-0155-4441-aa2e-a7f950d1a24c": {
+          "id": "022c544a-0155-4441-aa2e-a7f950d1a24c",
+          "block_type": "start",
+          "content": {},
+          "x": 200,
+          "y": 80,
+          "next_blocks": [
+            "5bdde615-185c-401e-a4bc-88ad141ecc18"
+          ]
+        },
+        "5bdde615-185c-401e-a4bc-88ad141ecc18": {
+          "id": "5bdde615-185c-401e-a4bc-88ad141ecc18",
+          "block_type": "assign",
+          "content": {
+            "target": "a",
+            "src_type": "const",
+            "source": "5"
+          },
+          "x": 200,
+          "y": 160,
+          "next_blocks": [
+            "f64dd58b-577f-4020-a2fe-82256bd47ddc"
+          ]
+        },
+        "f64dd58b-577f-4020-a2fe-82256bd47ddc": {
+          "id": "f64dd58b-577f-4020-a2fe-82256bd47ddc",
+          "block_type": "assign",
+          "content": {
+            "target": "b",
+            "src_type": "var",
+            "source": "a"
+          },
+          "x": 200,
+          "y": 240,
+          "next_blocks": [
+            "bb3f0e23-87cd-44a9-82ab-2cb161689e76"
+          ]
+        },
+        "bb3f0e23-87cd-44a9-82ab-2cb161689e76": {
+          "id": "bb3f0e23-87cd-44a9-82ab-2cb161689e76",
+          "block_type": "assign",
+          "content": {
+            "target": "c",
+            "src_type": "var",
+            "source": "b"
+          },
+          "x": 200,
+          "y": 320,
+          "next_blocks": [
+            "55deddfa-b611-4c12-9de9-6c8e8244456e"
+          ]
+        },
+        "55deddfa-b611-4c12-9de9-6c8e8244456e": {
+          "id": "55deddfa-b611-4c12-9de9-6c8e8244456e",
+          "block_type": "print",
+          "content": {
+            "var": "c"
+          },
+          "x": 200,
+          "y": 400,
+          "next_blocks": [
+            "fad4bc93-0f68-4943-92fc-0f5bff61c389"
+          ]
+        },
+        "fad4bc93-0f68-4943-92fc-0f5bff61c389": {
+          "id": "fad4bc93-0f68-4943-92fc-0f5bff61c389",
+          "block_type": "end",
+          "content": {},
+          "x": 200,
+          "y": 480,
+          "next_blocks": []
+        }
+      },
+      "start_block_id": "022c544a-0155-4441-aa2e-a7f950d1a24c"
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "668d7d66-868a-4026-b632-afcf0984f10a",
+      "name": "always 5",
+      "input_data": "",
+      "expected_output": "5"
+    }
+  ]
+}

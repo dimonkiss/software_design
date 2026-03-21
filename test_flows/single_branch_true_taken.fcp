@@ -1,0 +1,107 @@
+{
+  "name": "single_branch_true_taken",
+  "flowcharts": [
+    {
+      "id": "98402be4-d7a2-476a-a385-9d2e3eb80137",
+      "name": "Main",
+      "blocks": {
+        "28e787b7-f7e6-49c1-b496-697d8661de26": {
+          "id": "28e787b7-f7e6-49c1-b496-697d8661de26",
+          "block_type": "start",
+          "content": {},
+          "x": 200,
+          "y": 80,
+          "next_blocks": [
+            "9e45cae3-4e4d-49ff-9286-630bbbe61c18"
+          ]
+        },
+        "9e45cae3-4e4d-49ff-9286-630bbbe61c18": {
+          "id": "9e45cae3-4e4d-49ff-9286-630bbbe61c18",
+          "block_type": "assign",
+          "content": {
+            "target": "x",
+            "src_type": "const",
+            "source": "1"
+          },
+          "x": 200,
+          "y": 160,
+          "next_blocks": [
+            "92ae305c-ab43-4955-a3d3-0d9e3a9a2ad8"
+          ]
+        },
+        "92ae305c-ab43-4955-a3d3-0d9e3a9a2ad8": {
+          "id": "92ae305c-ab43-4955-a3d3-0d9e3a9a2ad8",
+          "block_type": "condition",
+          "content": {
+            "var": "x",
+            "op": "==",
+            "value": "1"
+          },
+          "x": 200,
+          "y": 240,
+          "next_blocks": [
+            "9e9b2ee3-31ee-43ff-8470-3b74c283dde6",
+            "01375298-a878-4f4d-a8be-d4ed40b0c303"
+          ]
+        },
+        "9e9b2ee3-31ee-43ff-8470-3b74c283dde6": {
+          "id": "9e9b2ee3-31ee-43ff-8470-3b74c283dde6",
+          "block_type": "assign",
+          "content": {
+            "target": "y",
+            "src_type": "const",
+            "source": "10"
+          },
+          "x": 120,
+          "y": 340,
+          "next_blocks": [
+            "0329f006-ac2b-4abe-a29d-39dc0e5cbe72"
+          ]
+        },
+        "01375298-a878-4f4d-a8be-d4ed40b0c303": {
+          "id": "01375298-a878-4f4d-a8be-d4ed40b0c303",
+          "block_type": "assign",
+          "content": {
+            "target": "y",
+            "src_type": "const",
+            "source": "99"
+          },
+          "x": 280,
+          "y": 340,
+          "next_blocks": [
+            "0329f006-ac2b-4abe-a29d-39dc0e5cbe72"
+          ]
+        },
+        "0329f006-ac2b-4abe-a29d-39dc0e5cbe72": {
+          "id": "0329f006-ac2b-4abe-a29d-39dc0e5cbe72",
+          "block_type": "print",
+          "content": {
+            "var": "y"
+          },
+          "x": 200,
+          "y": 440,
+          "next_blocks": [
+            "d0c4291a-585e-4afb-ba0e-2273e419653d"
+          ]
+        },
+        "d0c4291a-585e-4afb-ba0e-2273e419653d": {
+          "id": "d0c4291a-585e-4afb-ba0e-2273e419653d",
+          "block_type": "end",
+          "content": {},
+          "x": 200,
+          "y": 520,
+          "next_blocks": []
+        }
+      },
+      "start_block_id": "28e787b7-f7e6-49c1-b496-697d8661de26"
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "edee0221-5903-4a78-9d3d-772f4bdd9d34",
+      "name": "always 10",
+      "input_data": "",
+      "expected_output": "10"
+    }
+  ]
+}

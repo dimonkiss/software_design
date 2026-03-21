@@ -1,0 +1,155 @@
+{
+  "name": "dual_multi_assign_race",
+  "flowcharts": [
+    {
+      "id": "f35884c6-8943-4c3b-9678-8c695e588983",
+      "name": "Thread-1",
+      "blocks": {
+        "704dab8d-70d9-4e5e-8a35-8f122d5f49a7": {
+          "id": "704dab8d-70d9-4e5e-8a35-8f122d5f49a7",
+          "block_type": "start",
+          "content": {},
+          "x": 150,
+          "y": 80,
+          "next_blocks": [
+            "396e2c8d-11e6-4413-bdb1-5b5de36f763a"
+          ]
+        },
+        "396e2c8d-11e6-4413-bdb1-5b5de36f763a": {
+          "id": "396e2c8d-11e6-4413-bdb1-5b5de36f763a",
+          "block_type": "assign",
+          "content": {
+            "target": "a",
+            "src_type": "const",
+            "source": "1"
+          },
+          "x": 150,
+          "y": 160,
+          "next_blocks": [
+            "611a5b31-80d6-4ef6-b5f1-de28b0f2a971"
+          ]
+        },
+        "611a5b31-80d6-4ef6-b5f1-de28b0f2a971": {
+          "id": "611a5b31-80d6-4ef6-b5f1-de28b0f2a971",
+          "block_type": "assign",
+          "content": {
+            "target": "b",
+            "src_type": "const",
+            "source": "2"
+          },
+          "x": 150,
+          "y": 240,
+          "next_blocks": [
+            "042391a0-3b70-4b72-a492-130119bffc79"
+          ]
+        },
+        "042391a0-3b70-4b72-a492-130119bffc79": {
+          "id": "042391a0-3b70-4b72-a492-130119bffc79",
+          "block_type": "print",
+          "content": {
+            "var": "a"
+          },
+          "x": 150,
+          "y": 320,
+          "next_blocks": [
+            "40e7ee4b-2279-4ddc-a946-66d6730ac0e7"
+          ]
+        },
+        "40e7ee4b-2279-4ddc-a946-66d6730ac0e7": {
+          "id": "40e7ee4b-2279-4ddc-a946-66d6730ac0e7",
+          "block_type": "end",
+          "content": {},
+          "x": 150,
+          "y": 400,
+          "next_blocks": []
+        }
+      },
+      "start_block_id": "704dab8d-70d9-4e5e-8a35-8f122d5f49a7"
+    },
+    {
+      "id": "0f34aba9-911c-4ec6-abf3-ca642ccf74fe",
+      "name": "Thread-2",
+      "blocks": {
+        "00815305-f1dc-416b-ac20-a454f034ab67": {
+          "id": "00815305-f1dc-416b-ac20-a454f034ab67",
+          "block_type": "start",
+          "content": {},
+          "x": 350,
+          "y": 80,
+          "next_blocks": [
+            "6c48bfd7-4caf-4686-92b3-7d4cbabaca41"
+          ]
+        },
+        "6c48bfd7-4caf-4686-92b3-7d4cbabaca41": {
+          "id": "6c48bfd7-4caf-4686-92b3-7d4cbabaca41",
+          "block_type": "assign",
+          "content": {
+            "target": "a",
+            "src_type": "const",
+            "source": "3"
+          },
+          "x": 350,
+          "y": 160,
+          "next_blocks": [
+            "249843de-6ba5-4de0-b93b-bd7cf2305901"
+          ]
+        },
+        "249843de-6ba5-4de0-b93b-bd7cf2305901": {
+          "id": "249843de-6ba5-4de0-b93b-bd7cf2305901",
+          "block_type": "assign",
+          "content": {
+            "target": "b",
+            "src_type": "const",
+            "source": "4"
+          },
+          "x": 350,
+          "y": 240,
+          "next_blocks": [
+            "928e5f72-a552-44f0-ac00-fc61318cc931"
+          ]
+        },
+        "928e5f72-a552-44f0-ac00-fc61318cc931": {
+          "id": "928e5f72-a552-44f0-ac00-fc61318cc931",
+          "block_type": "print",
+          "content": {
+            "var": "b"
+          },
+          "x": 350,
+          "y": 320,
+          "next_blocks": [
+            "42c4e706-3663-44e6-bf42-376cfd4572e7"
+          ]
+        },
+        "42c4e706-3663-44e6-bf42-376cfd4572e7": {
+          "id": "42c4e706-3663-44e6-bf42-376cfd4572e7",
+          "block_type": "end",
+          "content": {},
+          "x": 350,
+          "y": 400,
+          "next_blocks": []
+        }
+      },
+      "start_block_id": "00815305-f1dc-416b-ac20-a454f034ab67"
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "c238ef51-e9fa-4863-9f08-ec4dae4f66ab",
+      "name": "T1 a=1, T2 b=4",
+      "input_data": "",
+      "expected_output": "1\n4"
+    },
+    {
+      "id": "e3e184f2-23a1-40bd-a979-6fbf4a62f4cb",
+      "name": "T2 overwrites a, T2 b=4",
+      "input_data": "",
+      "expected_output": "3\n4"
+    },
+    {
+      "id": "6804159d-b6b2-464a-86c4-a4e3ee93be08",
+      "name": "T1 a=1, T1 b=2, then T2",
+      "input_data": "",
+      "expected_output": "1\n2"
+    }
+  ]
+}

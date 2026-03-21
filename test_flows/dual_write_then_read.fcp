@@ -1,0 +1,95 @@
+{
+  "name": "dual_write_then_read",
+  "flowcharts": [
+    {
+      "id": "10944a63-b718-4733-a6e2-1478df398858",
+      "name": "Writer",
+      "blocks": {
+        "e90c97c7-ac76-4f43-8231-383c38e5b8ce": {
+          "id": "e90c97c7-ac76-4f43-8231-383c38e5b8ce",
+          "block_type": "start",
+          "content": {},
+          "x": 150,
+          "y": 80,
+          "next_blocks": [
+            "06f35ef8-7aca-4a13-a933-08bcd035efc2"
+          ]
+        },
+        "06f35ef8-7aca-4a13-a933-08bcd035efc2": {
+          "id": "06f35ef8-7aca-4a13-a933-08bcd035efc2",
+          "block_type": "assign",
+          "content": {
+            "target": "x",
+            "src_type": "const",
+            "source": "42"
+          },
+          "x": 150,
+          "y": 160,
+          "next_blocks": [
+            "8199ff34-0fa3-4bdb-8c13-bbc6cf752b1b"
+          ]
+        },
+        "8199ff34-0fa3-4bdb-8c13-bbc6cf752b1b": {
+          "id": "8199ff34-0fa3-4bdb-8c13-bbc6cf752b1b",
+          "block_type": "end",
+          "content": {},
+          "x": 150,
+          "y": 240,
+          "next_blocks": []
+        }
+      },
+      "start_block_id": "e90c97c7-ac76-4f43-8231-383c38e5b8ce"
+    },
+    {
+      "id": "041a7c50-5103-4137-a3b1-fe5c33edde73",
+      "name": "Reader",
+      "blocks": {
+        "f7f63a5f-ca05-4139-a3e3-879ce41c0bc3": {
+          "id": "f7f63a5f-ca05-4139-a3e3-879ce41c0bc3",
+          "block_type": "start",
+          "content": {},
+          "x": 350,
+          "y": 80,
+          "next_blocks": [
+            "5a0e2f79-89b0-4b43-9ab4-c829800f1b9a"
+          ]
+        },
+        "5a0e2f79-89b0-4b43-9ab4-c829800f1b9a": {
+          "id": "5a0e2f79-89b0-4b43-9ab4-c829800f1b9a",
+          "block_type": "print",
+          "content": {
+            "var": "x"
+          },
+          "x": 350,
+          "y": 160,
+          "next_blocks": [
+            "281b5de0-981a-41b8-9a5f-4066f0862285"
+          ]
+        },
+        "281b5de0-981a-41b8-9a5f-4066f0862285": {
+          "id": "281b5de0-981a-41b8-9a5f-4066f0862285",
+          "block_type": "end",
+          "content": {},
+          "x": 350,
+          "y": 240,
+          "next_blocks": []
+        }
+      },
+      "start_block_id": "f7f63a5f-ca05-4139-a3e3-879ce41c0bc3"
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "3c97b14e-acaa-4a1e-b8ed-1058286f5ca9",
+      "name": "reader sees 42 (after write)",
+      "input_data": "",
+      "expected_output": "42"
+    },
+    {
+      "id": "257bc27d-8b4b-42d9-ad03-6ef12ecf6231",
+      "name": "reader sees 0 (before write)",
+      "input_data": "",
+      "expected_output": "0"
+    }
+  ]
+}

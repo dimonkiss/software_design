@@ -1,0 +1,92 @@
+{
+  "name": "single_overwrite_var",
+  "flowcharts": [
+    {
+      "id": "25ef732c-c30c-4635-9710-864f65a5794f",
+      "name": "Main",
+      "blocks": {
+        "0dad421a-cbb3-4223-a621-1526fbe6320c": {
+          "id": "0dad421a-cbb3-4223-a621-1526fbe6320c",
+          "block_type": "start",
+          "content": {},
+          "x": 200,
+          "y": 80,
+          "next_blocks": [
+            "bdf7e74a-44b7-40c3-b921-ffa813410f77"
+          ]
+        },
+        "bdf7e74a-44b7-40c3-b921-ffa813410f77": {
+          "id": "bdf7e74a-44b7-40c3-b921-ffa813410f77",
+          "block_type": "assign",
+          "content": {
+            "target": "x",
+            "src_type": "const",
+            "source": "1"
+          },
+          "x": 200,
+          "y": 160,
+          "next_blocks": [
+            "5e1d4028-5043-4d3e-b741-c1aeec77b1d0"
+          ]
+        },
+        "5e1d4028-5043-4d3e-b741-c1aeec77b1d0": {
+          "id": "5e1d4028-5043-4d3e-b741-c1aeec77b1d0",
+          "block_type": "assign",
+          "content": {
+            "target": "x",
+            "src_type": "const",
+            "source": "2"
+          },
+          "x": 200,
+          "y": 240,
+          "next_blocks": [
+            "2e83af94-cbda-4a35-a490-b274c5c45654"
+          ]
+        },
+        "2e83af94-cbda-4a35-a490-b274c5c45654": {
+          "id": "2e83af94-cbda-4a35-a490-b274c5c45654",
+          "block_type": "assign",
+          "content": {
+            "target": "x",
+            "src_type": "const",
+            "source": "3"
+          },
+          "x": 200,
+          "y": 320,
+          "next_blocks": [
+            "60951e4e-5ecf-40bd-8821-781030ecb11b"
+          ]
+        },
+        "60951e4e-5ecf-40bd-8821-781030ecb11b": {
+          "id": "60951e4e-5ecf-40bd-8821-781030ecb11b",
+          "block_type": "print",
+          "content": {
+            "var": "x"
+          },
+          "x": 200,
+          "y": 400,
+          "next_blocks": [
+            "39261984-cd8b-4b1a-a754-c04c9fd1bc91"
+          ]
+        },
+        "39261984-cd8b-4b1a-a754-c04c9fd1bc91": {
+          "id": "39261984-cd8b-4b1a-a754-c04c9fd1bc91",
+          "block_type": "end",
+          "content": {},
+          "x": 200,
+          "y": 480,
+          "next_blocks": []
+        }
+      },
+      "start_block_id": "0dad421a-cbb3-4223-a621-1526fbe6320c"
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "233d5db9-1e77-423f-bef7-f45173883626",
+      "name": "always 3",
+      "input_data": "",
+      "expected_output": "3"
+    }
+  ]
+}

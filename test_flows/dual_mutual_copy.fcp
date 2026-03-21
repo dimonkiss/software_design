@@ -1,0 +1,109 @@
+{
+  "name": "dual_mutual_copy",
+  "flowcharts": [
+    {
+      "id": "df70e043-ae08-441a-9a72-5e98d3fbde40",
+      "name": "Copier",
+      "blocks": {
+        "8924ff68-826b-4da8-9c1d-57fa02199602": {
+          "id": "8924ff68-826b-4da8-9c1d-57fa02199602",
+          "block_type": "start",
+          "content": {},
+          "x": 150,
+          "y": 80,
+          "next_blocks": [
+            "56e943ae-bd7f-4089-98c8-be5184df8b40"
+          ]
+        },
+        "56e943ae-bd7f-4089-98c8-be5184df8b40": {
+          "id": "56e943ae-bd7f-4089-98c8-be5184df8b40",
+          "block_type": "assign",
+          "content": {
+            "target": "b",
+            "src_type": "var",
+            "source": "a"
+          },
+          "x": 150,
+          "y": 160,
+          "next_blocks": [
+            "87dda5f9-0d47-4aec-a35e-d341f983931a"
+          ]
+        },
+        "87dda5f9-0d47-4aec-a35e-d341f983931a": {
+          "id": "87dda5f9-0d47-4aec-a35e-d341f983931a",
+          "block_type": "print",
+          "content": {
+            "var": "b"
+          },
+          "x": 150,
+          "y": 240,
+          "next_blocks": [
+            "33ebc3c7-d295-4662-9048-0c5737b62f54"
+          ]
+        },
+        "33ebc3c7-d295-4662-9048-0c5737b62f54": {
+          "id": "33ebc3c7-d295-4662-9048-0c5737b62f54",
+          "block_type": "end",
+          "content": {},
+          "x": 150,
+          "y": 320,
+          "next_blocks": []
+        }
+      },
+      "start_block_id": "8924ff68-826b-4da8-9c1d-57fa02199602"
+    },
+    {
+      "id": "91d43544-8cfe-4ebc-9ab6-2e7f8fc10def",
+      "name": "Setter",
+      "blocks": {
+        "f7b0d212-a868-4598-a26f-2e6557b4ea08": {
+          "id": "f7b0d212-a868-4598-a26f-2e6557b4ea08",
+          "block_type": "start",
+          "content": {},
+          "x": 350,
+          "y": 80,
+          "next_blocks": [
+            "f8039511-bbb5-4767-bdef-58431da42fea"
+          ]
+        },
+        "f8039511-bbb5-4767-bdef-58431da42fea": {
+          "id": "f8039511-bbb5-4767-bdef-58431da42fea",
+          "block_type": "assign",
+          "content": {
+            "target": "a",
+            "src_type": "const",
+            "source": "99"
+          },
+          "x": 350,
+          "y": 160,
+          "next_blocks": [
+            "d1d21e46-216e-4b3b-9f4e-08f7c2162c54"
+          ]
+        },
+        "d1d21e46-216e-4b3b-9f4e-08f7c2162c54": {
+          "id": "d1d21e46-216e-4b3b-9f4e-08f7c2162c54",
+          "block_type": "end",
+          "content": {},
+          "x": 350,
+          "y": 240,
+          "next_blocks": []
+        }
+      },
+      "start_block_id": "f7b0d212-a868-4598-a26f-2e6557b4ea08"
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "a2298559-dd2c-4ae9-b0bd-c35a75e744ae",
+      "name": "copy before set → 0",
+      "input_data": "",
+      "expected_output": "0"
+    },
+    {
+      "id": "390a69e1-ee2b-47b1-aca4-0fc2cbcc52c1",
+      "name": "copy after set → 99",
+      "input_data": "",
+      "expected_output": "99"
+    }
+  ]
+}

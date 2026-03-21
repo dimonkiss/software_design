@@ -1,0 +1,109 @@
+{
+  "name": "dual_producer_consumer",
+  "flowcharts": [
+    {
+      "id": "5b939076-396c-4000-a33e-3c0b0356290c",
+      "name": "Producer",
+      "blocks": {
+        "69168f9a-4ab3-4fb7-8f36-15abacaa8751": {
+          "id": "69168f9a-4ab3-4fb7-8f36-15abacaa8751",
+          "block_type": "start",
+          "content": {},
+          "x": 150,
+          "y": 80,
+          "next_blocks": [
+            "dd6c6a35-fa36-40ce-92ff-4b4fe10218f4"
+          ]
+        },
+        "dd6c6a35-fa36-40ce-92ff-4b4fe10218f4": {
+          "id": "dd6c6a35-fa36-40ce-92ff-4b4fe10218f4",
+          "block_type": "assign",
+          "content": {
+            "target": "data",
+            "src_type": "const",
+            "source": "42"
+          },
+          "x": 150,
+          "y": 160,
+          "next_blocks": [
+            "54b688cd-e904-4169-8115-ba598d1278f1"
+          ]
+        },
+        "54b688cd-e904-4169-8115-ba598d1278f1": {
+          "id": "54b688cd-e904-4169-8115-ba598d1278f1",
+          "block_type": "end",
+          "content": {},
+          "x": 150,
+          "y": 240,
+          "next_blocks": []
+        }
+      },
+      "start_block_id": "69168f9a-4ab3-4fb7-8f36-15abacaa8751"
+    },
+    {
+      "id": "2a59ff62-e22d-47c8-a7c4-5f8df55fa516",
+      "name": "Consumer",
+      "blocks": {
+        "816f5711-2143-450b-81df-615a6267b5c4": {
+          "id": "816f5711-2143-450b-81df-615a6267b5c4",
+          "block_type": "start",
+          "content": {},
+          "x": 350,
+          "y": 80,
+          "next_blocks": [
+            "0d60ad14-2da3-4abc-82aa-e73fde42bc3f"
+          ]
+        },
+        "0d60ad14-2da3-4abc-82aa-e73fde42bc3f": {
+          "id": "0d60ad14-2da3-4abc-82aa-e73fde42bc3f",
+          "block_type": "assign",
+          "content": {
+            "target": "result",
+            "src_type": "var",
+            "source": "data"
+          },
+          "x": 350,
+          "y": 160,
+          "next_blocks": [
+            "060b0196-900b-44d8-83bf-97b0a4f44f6a"
+          ]
+        },
+        "060b0196-900b-44d8-83bf-97b0a4f44f6a": {
+          "id": "060b0196-900b-44d8-83bf-97b0a4f44f6a",
+          "block_type": "print",
+          "content": {
+            "var": "result"
+          },
+          "x": 350,
+          "y": 240,
+          "next_blocks": [
+            "e2dd4358-522b-4deb-8306-5c221784e545"
+          ]
+        },
+        "e2dd4358-522b-4deb-8306-5c221784e545": {
+          "id": "e2dd4358-522b-4deb-8306-5c221784e545",
+          "block_type": "end",
+          "content": {},
+          "x": 350,
+          "y": 320,
+          "next_blocks": []
+        }
+      },
+      "start_block_id": "816f5711-2143-450b-81df-615a6267b5c4"
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "12057251-8a1e-48a8-aa79-c4c0bdb254c7",
+      "name": "consumer reads before produce → 0",
+      "input_data": "",
+      "expected_output": "0"
+    },
+    {
+      "id": "8c959073-055e-4959-8f0d-2c32e927013a",
+      "name": "consumer reads after produce → 42",
+      "input_data": "",
+      "expected_output": "42"
+    }
+  ]
+}

@@ -21,6 +21,7 @@ Layout
 from __future__ import annotations
 
 import tkinter as tk
+from pathlib import Path
 from tkinter import filedialog, messagebox, simpledialog, ttk
 from typing import Optional
 
@@ -177,6 +178,10 @@ class MainWindow(tk.Tk):
         ):
             ttk.Button(row2, text=text, width=10, command=cmd).pack(
                 side=tk.LEFT, padx=2, pady=1)
+
+        ttk.Separator(row2, orient=tk.VERTICAL).pack(side=tk.LEFT, fill=tk.Y, padx=6, pady=2)
+        ttk.Button(row2, text="📂 Load example", command=self._cmd_load_test_flow).pack(
+            side=tk.LEFT, padx=2, pady=1)
 
         self._mode_label = ttk.Label(row2, text="Mode: SELECT", foreground="navy",
                                      font=("Helvetica", 9, "bold"))
@@ -397,6 +402,81 @@ class MainWindow(tk.Tk):
 
     def _cmd_run_test(self) -> None:
         self._notebook.select(2)  # switch to Tests tab
+
+    # ──────────────────────────────────────────────────────── load test flow
+    def _cmd_load_test_flow(self) -> None:
+        """Open a picker dialog and load a generated test flow."""
+        flows_dir = Path(__file__).parent.parent / "test_flows"
+        if not flows_dir.exists():
+            messagebox.showwarning("Not found",
+                                   f"test_flows/ directory not found.\n"
+                                   f"Run generate_test_flows.py first.")
+            return
+
+        fcp_files = sorted(flows_dir.glob("*.fcp"))
+        if not fcp_files:
+            messagebox.showwarning("No flows", "No .fcp files found in test_flows/.")
+            return
+
+        if self._dirty and not messagebox.askyesno("Unsaved changes",
+                                                    "Discard unsaved changes?"):
+            return
+
+        # ── build picker dialog ────────────────────────────────────────────
+        dlg = tk.Toplevel(self)
+        dlg.title("Load example flow")
+        dlg.resizable(False, False)
+        dlg.grab_set()
+
+        ttk.Label(dlg, text="Choose a test flow to load:",
+                  font=("Helvetica", 10, "bold")).pack(padx=12, pady=(10, 4), anchor=tk.W)
+
+        frame = ttk.Frame(dlg)
+        frame.pack(fill=tk.BOTH, expand=True, padx=12)
+
+        sb = ttk.Scrollbar(frame, orient=tk.VERTICAL)
+        lb = tk.Listbox(frame, width=44, height=22,
+                        yscrollcommand=sb.set, selectmode=tk.SINGLE,
+                        exportselection=False, font=("Courier New", 10))
+        sb.configure(command=lb.yview)
+        lb.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        sb.pack(side=tk.LEFT, fill=tk.Y)
+
+        for f in fcp_files:
+            lb.insert(tk.END, f.stem)
+
+        lb.selection_set(0)
+
+        def _load() -> None:
+            sel = lb.curselection()
+            if not sel:
+                return
+            path = fcp_files[sel[0]]
+            try:
+                self._program      = load_program(path)
+                self._current_file = str(path)
+                self._dirty        = False
+                self._reload_ui()
+                self.title(f"{self.APP_TITLE} – {path.stem}")
+                self._set_status(f"Loaded example: {path.stem}")
+                dlg.destroy()
+            except Exception as exc:
+                messagebox.showerror("Load failed", str(exc), parent=dlg)
+
+        btn_row = ttk.Frame(dlg)
+        btn_row.pack(fill=tk.X, padx=12, pady=(6, 10))
+        ttk.Button(btn_row, text="Load", command=_load).pack(side=tk.LEFT, padx=(0, 4))
+        ttk.Button(btn_row, text="Cancel", command=dlg.destroy).pack(side=tk.LEFT)
+
+        lb.bind("<Double-Button-1>", lambda _e: _load())
+        dlg.bind("<Return>", lambda _e: _load())
+        dlg.bind("<Escape>", lambda _e: dlg.destroy())
+
+        # Centre over main window
+        self.update_idletasks()
+        x = self.winfo_x() + (self.winfo_width()  - dlg.winfo_reqwidth())  // 2
+        y = self.winfo_y() + (self.winfo_height() - dlg.winfo_reqheight()) // 2
+        dlg.geometry(f"+{x}+{y}")
 
     # ──────────────────────────────────────────────────────── dirty flag
     def _mark_dirty(self) -> None:

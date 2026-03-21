@@ -1,0 +1,98 @@
+{
+  "name": "single_read_two_echo",
+  "flowcharts": [
+    {
+      "id": "dd8f1561-9298-4c18-9b8c-2f13713456bc",
+      "name": "Main",
+      "blocks": {
+        "c8226a5f-1d19-41c9-9d88-87f07269dbe8": {
+          "id": "c8226a5f-1d19-41c9-9d88-87f07269dbe8",
+          "block_type": "start",
+          "content": {},
+          "x": 200,
+          "y": 80,
+          "next_blocks": [
+            "c8f715c3-6832-4dc5-86b5-78fc9f922960"
+          ]
+        },
+        "c8f715c3-6832-4dc5-86b5-78fc9f922960": {
+          "id": "c8f715c3-6832-4dc5-86b5-78fc9f922960",
+          "block_type": "input",
+          "content": {
+            "var": "a"
+          },
+          "x": 200,
+          "y": 160,
+          "next_blocks": [
+            "0e9cbe02-3580-456d-8500-4b9a275d5159"
+          ]
+        },
+        "0e9cbe02-3580-456d-8500-4b9a275d5159": {
+          "id": "0e9cbe02-3580-456d-8500-4b9a275d5159",
+          "block_type": "input",
+          "content": {
+            "var": "b"
+          },
+          "x": 200,
+          "y": 240,
+          "next_blocks": [
+            "8d7f5223-cf57-4384-bb7d-6516cacaa25c"
+          ]
+        },
+        "8d7f5223-cf57-4384-bb7d-6516cacaa25c": {
+          "id": "8d7f5223-cf57-4384-bb7d-6516cacaa25c",
+          "block_type": "print",
+          "content": {
+            "var": "a"
+          },
+          "x": 200,
+          "y": 320,
+          "next_blocks": [
+            "56862c6b-3719-45ee-80b3-6e516c25982b"
+          ]
+        },
+        "56862c6b-3719-45ee-80b3-6e516c25982b": {
+          "id": "56862c6b-3719-45ee-80b3-6e516c25982b",
+          "block_type": "print",
+          "content": {
+            "var": "b"
+          },
+          "x": 200,
+          "y": 400,
+          "next_blocks": [
+            "7167ec46-5c3c-4214-8e40-61fce291f343"
+          ]
+        },
+        "7167ec46-5c3c-4214-8e40-61fce291f343": {
+          "id": "7167ec46-5c3c-4214-8e40-61fce291f343",
+          "block_type": "end",
+          "content": {},
+          "x": 200,
+          "y": 480,
+          "next_blocks": []
+        }
+      },
+      "start_block_id": "c8226a5f-1d19-41c9-9d88-87f07269dbe8"
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "80316466-889d-47e8-86a5-f1e48393d1f1",
+      "name": "3 and 9",
+      "input_data": "3 9",
+      "expected_output": "3\n9"
+    },
+    {
+      "id": "99e6b3ab-d1e2-47dd-8f91-056f5c53669d",
+      "name": "0 and 1",
+      "input_data": "0 1",
+      "expected_output": "0\n1"
+    },
+    {
+      "id": "4bf7d588-6117-48ef-9522-e2b2019ebbed",
+      "name": "5 and 5",
+      "input_data": "5 5",
+      "expected_output": "5\n5"
+    }
+  ]
+}

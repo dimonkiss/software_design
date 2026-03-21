@@ -1,0 +1,150 @@
+{
+  "name": "single_two_consecutive_conds",
+  "flowcharts": [
+    {
+      "id": "ecf9ebfa-8981-41d2-bf4f-8fbdba179661",
+      "name": "Main",
+      "blocks": {
+        "7dfa9b34-4628-4f1f-b747-ac6346c14e1f": {
+          "id": "7dfa9b34-4628-4f1f-b747-ac6346c14e1f",
+          "block_type": "start",
+          "content": {},
+          "x": 200,
+          "y": 80,
+          "next_blocks": [
+            "66387c73-aed7-42b0-b2d7-c21dbae9a5c6"
+          ]
+        },
+        "66387c73-aed7-42b0-b2d7-c21dbae9a5c6": {
+          "id": "66387c73-aed7-42b0-b2d7-c21dbae9a5c6",
+          "block_type": "assign",
+          "content": {
+            "target": "x",
+            "src_type": "const",
+            "source": "3"
+          },
+          "x": 200,
+          "y": 160,
+          "next_blocks": [
+            "60815a2b-065f-4182-9d80-7103d30989af"
+          ]
+        },
+        "60815a2b-065f-4182-9d80-7103d30989af": {
+          "id": "60815a2b-065f-4182-9d80-7103d30989af",
+          "block_type": "condition",
+          "content": {
+            "var": "x",
+            "op": "<",
+            "value": "5"
+          },
+          "x": 200,
+          "y": 240,
+          "next_blocks": [
+            "28cd29ea-ecaa-402f-95fb-caa85a575b07",
+            "d3583227-60cc-44f5-80ce-2a071e8149c7"
+          ]
+        },
+        "28cd29ea-ecaa-402f-95fb-caa85a575b07": {
+          "id": "28cd29ea-ecaa-402f-95fb-caa85a575b07",
+          "block_type": "assign",
+          "content": {
+            "target": "a",
+            "src_type": "const",
+            "source": "1"
+          },
+          "x": 100,
+          "y": 340,
+          "next_blocks": [
+            "04b849c7-168d-4cc5-b2ef-c1bd165d5e4a"
+          ]
+        },
+        "d3583227-60cc-44f5-80ce-2a071e8149c7": {
+          "id": "d3583227-60cc-44f5-80ce-2a071e8149c7",
+          "block_type": "assign",
+          "content": {
+            "target": "a",
+            "src_type": "const",
+            "source": "0"
+          },
+          "x": 300,
+          "y": 340,
+          "next_blocks": [
+            "04b849c7-168d-4cc5-b2ef-c1bd165d5e4a"
+          ]
+        },
+        "04b849c7-168d-4cc5-b2ef-c1bd165d5e4a": {
+          "id": "04b849c7-168d-4cc5-b2ef-c1bd165d5e4a",
+          "block_type": "condition",
+          "content": {
+            "var": "a",
+            "op": "==",
+            "value": "1"
+          },
+          "x": 200,
+          "y": 440,
+          "next_blocks": [
+            "4b2b9a7d-65a1-4fd6-ab4a-31d02ef61fbe",
+            "f67293c6-e635-4f75-89fc-353193f68ac6"
+          ]
+        },
+        "4b2b9a7d-65a1-4fd6-ab4a-31d02ef61fbe": {
+          "id": "4b2b9a7d-65a1-4fd6-ab4a-31d02ef61fbe",
+          "block_type": "assign",
+          "content": {
+            "target": "b",
+            "src_type": "const",
+            "source": "10"
+          },
+          "x": 100,
+          "y": 540,
+          "next_blocks": [
+            "e1becf4c-0ddb-467f-b60e-9c41ceda3dfb"
+          ]
+        },
+        "f67293c6-e635-4f75-89fc-353193f68ac6": {
+          "id": "f67293c6-e635-4f75-89fc-353193f68ac6",
+          "block_type": "assign",
+          "content": {
+            "target": "b",
+            "src_type": "const",
+            "source": "20"
+          },
+          "x": 300,
+          "y": 540,
+          "next_blocks": [
+            "e1becf4c-0ddb-467f-b60e-9c41ceda3dfb"
+          ]
+        },
+        "e1becf4c-0ddb-467f-b60e-9c41ceda3dfb": {
+          "id": "e1becf4c-0ddb-467f-b60e-9c41ceda3dfb",
+          "block_type": "print",
+          "content": {
+            "var": "b"
+          },
+          "x": 200,
+          "y": 640,
+          "next_blocks": [
+            "eb2d3a20-5a3f-4c18-8b09-2ef569276aba"
+          ]
+        },
+        "eb2d3a20-5a3f-4c18-8b09-2ef569276aba": {
+          "id": "eb2d3a20-5a3f-4c18-8b09-2ef569276aba",
+          "block_type": "end",
+          "content": {},
+          "x": 200,
+          "y": 720,
+          "next_blocks": []
+        }
+      },
+      "start_block_id": "7dfa9b34-4628-4f1f-b747-ac6346c14e1f"
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "ffc58c88-fa94-4d45-a22a-97764a29f75b",
+      "name": "x=3 → b=10",
+      "input_data": "",
+      "expected_output": "10"
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "name": "dual_same_constant_both_print",
+  "flowcharts": [
+    {
+      "id": "4c336331-196f-4262-92b0-d26c382002da",
+      "name": "Thread-1",
+      "blocks": {
+        "bfcab874-494c-4b0d-bac0-7e0df9d3c0cb": {
+          "id": "bfcab874-494c-4b0d-bac0-7e0df9d3c0cb",
+          "block_type": "start",
+          "content": {},
+          "x": 150,
+          "y": 80,
+          "next_blocks": [
+            "2b41a316-57c9-455d-972c-4b725273d22d"
+          ]
+        },
+        "2b41a316-57c9-455d-972c-4b725273d22d": {
+          "id": "2b41a316-57c9-455d-972c-4b725273d22d",
+          "block_type": "assign",
+          "content": {
+            "target": "z",
+            "src_type": "const",
+            "source": "7"
+          },
+          "x": 150,
+          "y": 160,
+          "next_blocks": [
+            "78677c06-2ca6-4df7-82d1-08f9359b989e"
+          ]
+        },
+        "78677c06-2ca6-4df7-82d1-08f9359b989e": {
+          "id": "78677c06-2ca6-4df7-82d1-08f9359b989e",
+          "block_type": "print",
+          "content": {
+            "var": "z"
+          },
+          "x": 150,
+          "y": 240,
+          "next_blocks": [
+            "16c6f052-da1e-407d-8d42-aa33e15ce031"
+          ]
+        },
+        "16c6f052-da1e-407d-8d42-aa33e15ce031": {
+          "id": "16c6f052-da1e-407d-8d42-aa33e15ce031",
+          "block_type": "end",
+          "content": {},
+          "x": 150,
+          "y": 320,
+          "next_blocks": []
+        }
+      },
+      "start_block_id": "bfcab874-494c-4b0d-bac0-7e0df9d3c0cb"
+    },
+    {
+      "id": "e3f6ec78-65b9-4d65-87eb-1cf061dbf858",
+      "name": "Thread-2",
+      "blocks": {
+        "110dae3f-e03e-4c8b-a8ae-7a1d366538bc": {
+          "id": "110dae3f-e03e-4c8b-a8ae-7a1d366538bc",
+          "block_type": "start",
+          "content": {},
+          "x": 350,
+          "y": 80,
+          "next_blocks": [
+            "a21674c9-b68d-40a3-98f7-ca1862e38fb8"
+          ]
+        },
+        "a21674c9-b68d-40a3-98f7-ca1862e38fb8": {
+          "id": "a21674c9-b68d-40a3-98f7-ca1862e38fb8",
+          "block_type": "assign",
+          "content": {
+            "target": "z",
+            "src_type": "const",
+            "source": "7"
+          },
+          "x": 350,
+          "y": 160,
+          "next_blocks": [
+            "c7bfa141-4c67-4296-bb9d-fee5caef1f4c"
+          ]
+        },
+        "c7bfa141-4c67-4296-bb9d-fee5caef1f4c": {
+          "id": "c7bfa141-4c67-4296-bb9d-fee5caef1f4c",
+          "block_type": "print",
+          "content": {
+            "var": "z"
+          },
+          "x": 350,
+          "y": 240,
+          "next_blocks": [
+            "4068530a-e0f9-49e8-afc7-38b08d2a3a79"
+          ]
+        },
+        "4068530a-e0f9-49e8-afc7-38b08d2a3a79": {
+          "id": "4068530a-e0f9-49e8-afc7-38b08d2a3a79",
+          "block_type": "end",
+          "content": {},
+          "x": 350,
+          "y": 320,
+          "next_blocks": []
+        }
+      },
+      "start_block_id": "110dae3f-e03e-4c8b-a8ae-7a1d366538bc"
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "c7e4d4d1-fe58-4d49-9b55-6c4a15fcda49",
+      "name": "always 7 twice",
+      "input_data": "",
+      "expected_output": "7\n7"
+    }
+  ]
+}
